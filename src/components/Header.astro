@@ -10,7 +10,7 @@ const notInHome = pathname !== "/";
   {
     notInHome ? (
       <a href="/" class="text-secondary-500 hover:animate-pulse">
-        ダーニエル
+        Mahmudul
       </a>
     ) : (
       <a href={`mailto:${presentation.mail}`} class="hover:text-neutral-100">
@@ -28,6 +28,16 @@ const notInHome = pathname !== "/";
             ["hover:text-neutral-100"]: true,
             ["text-neutral-100"]: pathname === "/",
           }}>Home</a
+        >
+      </li>
+      <li>/</li>
+      <li>
+        <a
+          href="/resume"
+          class:list={{
+            ["hover:text-neutral-100"]: true,
+            ["text-neutral-100"]: pathname === "/resume",
+          }}>Resume</a
         >
       </li>
       <li>/</li>

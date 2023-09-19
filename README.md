@@ -1,4 +1,4 @@
-# 👨‍🚀 daniel-boll.me
+# 👨‍🚀 mahmudul.dev
 
 ## Template
 

@@ -19,7 +19,7 @@ type Props = {
 
 const { title, description, noindex, og } = Astro.props;
 
-const DEFAULT_TITLE_PAGE = "Daniel Boll";
+const DEFAULT_TITLE_PAGE = "Mahmudul Alam";
 const DEFAULT_DESCRIPTION_PAGE =
   "I'm a Tech Lead from Brazil. I love to create technology and use it to make people's lives easier.";
 const DEFAULT_URL_SITE = SITE_URL;
@@ -28,7 +28,7 @@ const openGraph = {
   title: og?.title || title || DEFAULT_TITLE_PAGE,
   type: og?.type || "website",
   image: og?.image || "/opengraph-image.png",
-  alt: og?.alt || "Daniel Boll",
+  alt: og?.alt || "Mahmudul Alam",
   url: DEFAULT_URL_SITE,
   description: og?.description || description || DEFAULT_DESCRIPTION_PAGE,
 };
@@ -59,7 +59,7 @@ const openGraph = {
         { rel: "sitemap", href: "/sitemap-index.xml" },
       ],
       meta: [
-        { property: "og:site_name", content: "Daniel Boll" },
+        { property: "og:site_name", content: "Mahmudul Alam" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "generator", content: Astro.generator },
         {

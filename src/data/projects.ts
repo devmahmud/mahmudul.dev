@@ -7,25 +7,25 @@ export type Project = {
 
 const projects: Project[] = [
   {
-    title: "BloomCG",
-    techs: ["C++", "OpenGL", "xmake"],
-    link: "https://github.com/Daniel-Boll/BloomCG-xmake",
+    title: 'Django Poll App',
+    techs: ['Django', 'Python', 'Bootstrap4'],
+    link: 'https://github.com/devmahmud/Django-Poll-App',
   },
   {
-    title: "Pile Lang",
-    techs: ["Rust", "Parser Combinators", "LLVM", "WebAssembly"],
-    link: "https://github.com/pile-lang/rusted-pile",
+    title: 'Material UI portfolio',
+    techs: ['React', 'Material UI', 'Javascript'],
+    link: 'https://github.com/devmahmud/material-ui-portfolio',
   },
   {
-    title: "Foliage Recognition",
-    techs: ["Python", "Scikit-Learn", "OpenCV"],
-    link: "https://github.com/Daniel-Boll/foliage-finder",
+    title: 'DevConnector',
+    techs: ['Django Rest Framework', 'React', 'Django'],
+    link: 'https://github.com/devmahmud/DevConnector-Django',
     isComingSoon: false,
   },
   {
-    title: "Packet Racers",
-    techs: ["Rust", "Tokyo", "Socket"],
-    link: "https://github.com/packet-racers/cli",
+    title: 'Django Blog',
+    techs: ['Django', 'Python', 'Bootstrap'],
+    link: 'https://github.com/devmahmud/DjangoBlog',
   },
 ]
   .sort((a, b) => a.title.localeCompare(b.title))
