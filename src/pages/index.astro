@@ -1,17 +1,17 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection } from 'astro:content';
 
-import Layout from "@/layouts/Layout.astro";
-import SocialLinks from "@/components/SocialLinks.astro";
-import FeaturedPostCard from "@/components/post/FeaturedPostCard.astro";
-import ProjectCard from "@/components/ProjectCard.astro";
-import Link from "@/components/shared/Link.astro";
-import convertAsteriskToStrongTag from "@/utils/convertAsteriskToStrongTag";
+import Layout from '@/layouts/Layout.astro';
+import SocialLinks from '@/components/SocialLinks.astro';
+import FeaturedPostCard from '@/components/post/FeaturedPostCard.astro';
+import ProjectCard from '@/components/ProjectCard.astro';
+import Link from '@/components/shared/Link.astro';
+import convertAsteriskToStrongTag from '@/utils/convertAsteriskToStrongTag';
 
-import presentation from "@/data/presentation";
-import projects from "@/data/projects";
+import presentation from '@/data/presentation';
+import projects from '@/data/projects';
 
-const allPosts = await getCollection("posts");
+const allPosts = await getCollection('posts');
 
 const posts = allPosts.filter((post) => !post.data.planned);
 const plannedPosts = allPosts.filter((post) => post.data.planned);
@@ -21,12 +21,12 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
   <main class="slide-enter-content flex flex-col gap-20">
     <article class="flex flex-col gap-8">
       <header>
-        <div class="flex flex-row gap-1">
-          <h1 class="text-3xl text-neutral-100">{"Hi, I’m"}</h1>
+        <div class="flex flex-row flex-wrap gap-1">
+          <h1 class="text-3xl text-neutral-100">{'Hi, I’m'}</h1>
           <h1
             class="bg-gradient-to-br from-primary-400 to-secondary-600 bg-clip-text text-3xl font-extrabold text-neutral-100 text-transparent"
           >
-            {"<Mahmudul::Alam>"}
+            {'<Mahmudul::Alam>'}
           </h1>
           <p class="wave text-3xl">👋</p>
         </div>
@@ -48,10 +48,7 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
       {projects.length === 0 && <p>Oops, I must work^^^^^</p>}
 
       <section class="flex flex-col gap-4">
-        {
-          projects.length !== 0 &&
-            projects.map((project) => <ProjectCard {...project} />)
-        }
+        {projects.length !== 0 && projects.map((project) => <ProjectCard {...project} />)}
       </section>
     </article>
 
@@ -102,7 +99,7 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
               ))
           ) : (
             <p>
-              No planned posts for a while, if you have any idea, please{" "}
+              No planned posts for a while, if you have any idea, please{' '}
               <Link
                 href={`mailto:${presentation.mail}`}
                 label="contact me"
