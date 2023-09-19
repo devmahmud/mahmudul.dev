@@ -32,10 +32,7 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
         </div>
         <h2 class="text-xl text-secondary-500">মাহমুদুল আলম</h2>
       </header>
-      <h2
-        class="max-w-[60ch] leading-6"
-        set:html={convertAsteriskToStrongTag(presentation.description)}
-      />
+      <h2 class="leading-6" set:html={convertAsteriskToStrongTag(presentation.description)} />
       <SocialLinks />
     </article>
 
