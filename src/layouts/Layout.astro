@@ -1,11 +1,11 @@
 ---
-import Header from "../components/Header.astro";
-import SEOTags from "@/components/seo/SEOTags.astro";
+import Header from '../components/Header.astro';
+import SEOTags from '@/components/seo/SEOTags.astro';
 
-import "@fontsource/open-sans";
-import "@/styles/tailwind.css";
-import "@/styles/post.css";
-import ThemeProvider from "@/components/ThemeProvider.astro";
+import '@fontsource/open-sans';
+import '@/styles/tailwind.css';
+import '@/styles/post.css';
+import ThemeProvider from '@/components/ThemeProvider.astro';
 
 export interface Props {
   title?: string;
@@ -33,7 +33,7 @@ const { title, og } = Astro.props;
     <slot />
     <style is:global>
       html {
-        font-family: "Inter";
+        font-family: 'Inter';
       }
     </style>
   </body>

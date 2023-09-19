@@ -1,0 +1,22 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import Education from '@/components/resume/Education.astro';
+import Sidebar from '@/components/resume/Sidebar.astro';
+import Skills from '@/components/resume/Skills.astro';
+import CoverLetter from '@/components/resume/CoverLetter.astro';
+import Experiences from '@/components/resume/Experiences.astro';
+---
+
+<Layout title="Resume">
+  <div class="grid h-full w-full gap-4 text-gray-200 sm:grid-cols-[1fr_2fr]">
+    <div class="print:grid print:grid-cols-2">
+      <Sidebar />
+      <Skills />
+    </div>
+    <div>
+      <CoverLetter />
+      <Experiences />
+      <Education />
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,13 @@
+---
+type Props = {
+  classNames?: string;
+  title: string;
+};
+
+const { classNames, title } = Astro.props;
+---
+
+<div class="border-bottom border-b-10 mb-4 border border-neutral-700 p-4">
+  <h3 class="py-2 text-lg font-semibold">{title}</h3>
+  <div><slot /></div>
+</div>

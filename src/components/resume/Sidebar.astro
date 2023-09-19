@@ -1,0 +1,26 @@
+---
+import ButtonLink from '@/components/shared/ButtonLink.astro';
+import resume from '@/data/resume';
+---
+
+<div
+  class="border-bottom border-b-10 mb-4 grid h-[inherit] gap-1 border border-neutral-700 text-center"
+>
+  <div class="relative h-[16rem] text-gray-900">
+    <div class="h-[60%] bg-primary-900 p-2"></div>
+    <img
+      class="mx-auto mt-[-100px] h-[180px] w-[180px] rounded-full border-gray-900"
+      alt="Profile logo"
+      src={resume.profile.avatarUrl}
+    />
+  </div>
+
+  <div class="info grid gap-4 p-6 pt-0">
+    <h2 class="text-2xl font-semibold">{resume.profile.name}</h2>
+    <p>Python || Javascript || Learner || Open Source Enthusiast</p>
+
+    <ButtonLink class="mx-auto w-full text-pink-400 print:hidden" href={resume.resumeURL}>
+      Resume
+    </ButtonLink>
+  </div>
+</div>

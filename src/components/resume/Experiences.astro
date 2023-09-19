@@ -1,0 +1,40 @@
+---
+import CardLayout from './CardLayout.astro';
+import ButtonLink from '@/components/shared/ButtonLink.astro';
+import MdiLinkedin from '~icons/mdi/linkedin';
+
+import resume from '@/data/resume';
+
+const { experiences, links } = resume;
+---
+
+<CardLayout title="Relevant Experiences">
+  <div class="my4 grid gap-6">
+    {
+      experiences.map((exp) => (
+        <div class="text-md grid gap-1">
+          <h4 class="fw500 text-base">{exp.jobTitle}</h4>
+          <p class="fw100 text-sm text-gray-300">
+            {exp.company}, {exp.datesEmployed}
+          </p>
+          <p class="mt2 text-sm">{exp.description}</p>
+          <div>
+            {exp.techStack.map((tech) => (
+              <span class="mr-1 inline-block rounded px-2 py-1 text-xs text-primary-500 hover:cursor-pointer hover:text-primary-700">
+                #{tech}
+              </span>
+            ))}
+          </div>
+        </div>
+      ))
+    }
+    <div class="text-center">
+      <ButtonLink href={links.linkedIn}>
+        <span>See more experiences</span>
+        <span>
+          <MdiLinkedin />
+        </span>
+      </ButtonLink>
+    </div>
+  </div>
+</CardLayout>
