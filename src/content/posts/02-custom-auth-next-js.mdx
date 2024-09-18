@@ -1,0 +1,238 @@
+---
+title: "Custom Authentication in Next.js Using External Backend"
+publishedAt: 2024-09-18
+description: "Learn how to implement custom authentication in Next.js with access tokens, refresh tokens, and token renewal using an external backend. Achieve full control and flexibility in your authentication flow."
+slug: "custom-auth-next-js"
+cover: "src/assets/posts/02/cover.jpg"
+coverAlt: "Custom Authentication in Next.js"
+---
+
+# Custom Authentication in Next.js Using External Backend
+
+Authentication is one of the most critical components of modern web applications. While solutions like NextAuth, Clerk, or Auth0 provide convenient out-of-the-box setups, there are situations where a custom implementation makes more sense. Perhaps you need more control, an external backend, or specific logic around tokens. 
+
+This post will guide you through creating a custom authentication system in Next.js using access tokens, refresh tokens, and automated token renewal, all integrated with an external backend.
+
+## Why Build Custom Authentication?
+
+Using your own authentication system offers several advantages:
+- **Complete Control:** Handle authentication precisely the way you need.
+- **Custom Logic:** Implement workflows like multi-factor authentication, role-based access, or external APIs for login.
+- **Seamless Integration with External Services:** If you rely on an external backend that issues its own tokens, custom auth is necessary.
+
+### Authentication Flow Overview
+
+1. **Login:** Users log in and receive both an access token (short-lived) and a refresh token (long-lived).
+2. **Session Management:** Store session details securely on the server using `iron-session`.
+3. **Token Renewal:** Automatically renew the access token when it expires using the refresh token.
+4. **Middleware Protection:** Use middleware to ensure valid tokens for each request.
+
+Let’s break this process down step-by-step.
+
+---
+
+## Step 1: Session Management with `iron-session`
+
+We’ll be using `iron-session` to store and manage authentication data securely on the server side. 
+
+Here’s the session configuration:
+
+```typescript
+// lib/session.ts
+import { SessionOptions } from "iron-session";
+
+export const sessionOptions: SessionOptions = {
+  password: process.env.SESSION_SECRET,
+  cookieName: "my-app-session",
+  cookieOptions: {
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+  },
+};
+
+export const defaultSession = {
+  isLoggedIn: false,
+  accessToken: null,
+  refreshToken: null,
+};
+```
+
+This session setup stores the user’s authentication data securely in a cookie that lasts for 30 days, with access and refresh tokens.
+
+---
+
+## Step 2: User Login and Token Storage
+
+When a user logs in, the backend will provide both access and refresh tokens. We store them in the session:
+
+```typescript
+// actions/auth.actions.ts
+import { getSession } from "iron-session/next";
+
+export async function login(credentials) {
+  const res = await fetch("/api/login", {
+    method: "POST",
+    body: JSON.stringify(credentials),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    const session = await getSession();
+    session.isLoggedIn = true;
+    session.accessToken = data.accessToken;
+    session.refreshToken = data.refreshToken;
+    await session.save();
+  }
+
+  return res;
+}
+```
+
+Upon successful login, the tokens are securely saved in the session for future use.
+
+---
+
+## Step 3: Renewing the Access Token
+
+Access tokens are short-lived for security reasons. When they expire, we use the refresh token to get a new access token without requiring the user to log in again.
+
+```typescript
+// actions/auth.actions.ts
+export async function renewSession() {
+  const session = await getSession();
+
+  const res = await fetch("/api/refresh-token", {
+    method: "POST",
+    body: JSON.stringify({ refresh_token: session.refreshToken }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (res.ok) {
+    const data = await res.json();
+    session.accessToken = data.accessToken;
+    await session.save();
+    return session;
+  }
+
+  return null;
+}
+```
+
+This function fetches a new access token from the backend using the refresh token stored in the session.
+
+---
+
+## Step 4: Token Validation and Renewal in Middleware
+
+To ensure users always have valid tokens, we can use middleware to validate and renew tokens on every request. If the access token is expired, we’ll renew it before proceeding.
+
+```typescript
+// middleware.ts
+import { NextResponse } from "next/server";
+import { getSession } from "./lib/session";
+import jwtDecode from "jwt-decode";
+
+function isTokenExpired(token) {
+  const decoded = jwtDecode(token);
+  const currentTime = Date.now() / 1000;
+  return decoded.exp < currentTime;
+}
+
+export async function middleware(request) {
+  const session = await getSession();
+  const response = NextResponse.next();
+
+  if (session.accessToken && isTokenExpired(session.accessToken)) {
+    try {
+      const newSession = await renewSession();
+      if (newSession) {
+        response.cookies.set("my-app-session", JSON.stringify(newSession));
+      } else {
+        return NextResponse.redirect("/login");
+      }
+    } catch (error) {
+      return NextResponse.redirect("/login");
+    }
+  }
+
+  return response;
+}
+```
+
+The middleware checks if the token is expired. If it is, it attempts to renew it using the refresh token and proceeds with the request.
+
+---
+
+## Step 5: Client-Side Token Refresh
+
+On the client side, we can manage access tokens seamlessly using the `SWR` library. Here’s how to refresh the token and retry requests if a 401 (unauthorized) error occurs:
+
+```typescript
+// components/SWRProvider.tsx
+import { useState } from "react";
+import { SWRConfig } from "swr";
+
+export default function SWRProvider({ initialAccessToken, refreshToken, children }) {
+  const [accessToken, setAccessToken] = useState(initialAccessToken);
+
+  const renewAccessToken = async () => {
+    const response = await fetch("/api/refresh-token", {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: refreshToken }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      setAccessToken(data.accessToken);
+      return data.accessToken;
+    }
+    
+    throw new Error("Failed to refresh token");
+  };
+
+  const fetcher = async (url, method = "GET", body = null) => {
+    const options = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    };
+
+    const res = await fetch(url, options);
+
+    if (res.status === 401) {
+      const newToken = await renewAccessToken();
+      options.headers["Authorization"] = `Bearer ${newToken}`;
+      const retryRes = await fetch(url, options);
+      return retryRes.ok ? retryRes.json() : Promise.reject("Failed after token refresh");
+    }
+
+    return res.ok ? res.json() : Promise.reject("Failed to fetch");
+  };
+
+  return <SWRConfig value={{ fetcher }}>{children}</SWRConfig>;
+}
+```
+
+This client-side SWR provider automatically refreshes tokens and retries failed requests, providing a seamless user experience.
+
+To use it:
+
+```jsx
+<SWRProvider initialAccessToken={session.accessToken} refreshToken={session.refreshToken}>
+  {children}
+</SWRProvider>
+```
+
+---
+
+## Conclusion
+
+By building custom authentication in Next.js, you gain full control over your authentication process and can easily integrate with external backends. This guide covers the essential steps for managing access and refresh tokens, handling token expiration, and providing a smooth user experience.
+
+If you're looking for flexibility and complete control, implementing custom authentication is a great choice.
+
+Happy coding!
