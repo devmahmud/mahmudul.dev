@@ -147,6 +147,33 @@ const resume = {
   ],
   experiences: [
     {
+      company: 'Creative Crowdfunding Protocol, PBC',
+      jobTitle: 'Senior Software Engineer',
+      location: 'Dhaka, Bangladesh (Hybrid)',
+      datesEmployed: 'Oct 2022 – present',
+      techStack: [
+        'embedded-wallet',
+        'react',
+        'react-native',
+        'Next.js',
+        'Web3.js',
+        'Ethereum',
+        'TypeScript',
+        'Python',
+        'JavaScript',
+        'redux',
+        'redux-toolkit',
+        'docker',
+        'aws',
+        'vercel',
+        'postgres',
+        'mongodb',
+        'redis',
+      ],
+      description:
+        'As a Frontend Engineer at Creative Crowdfunding Protocol, I specialize in building dynamic and engaging web applications using JavaScript and Next.js. I played a key role in developing our platform from the ground up, crafting a seamless user experience that supports our mission to revolutionize crowdfunding. My work involves collaborating with cross-functional teams to create robust, scalable solutions that push the boundaries of what’s possible in the world of creative funding.As a Frontend Engineer at Creative Crowdfunding Protocol, I specialize in building dynamic and engaging web applications using JavaScript and Next.js. I played a key role in developing our platform from the ground up, crafting a seamless user experience that supports our mission to revolutionize crowdfunding. My work involves collaborating with cross-functional teams to create robust, scalable solutions that push the boundaries of what’s possible in the world of creative funding.',
+    },
+    {
       company: 'Leveor',
       jobTitle: 'Founding Engineer',
       location: 'Dhaka, Bangladesh (Hybrid)',
@@ -170,7 +197,7 @@ const resume = {
       company: 'Universal Machine',
       jobTitle: 'Software Engineer',
       location: 'Santa Clara, California, United States (Remote)',
-      datesEmployed: 'Sep 2021 – Present',
+      datesEmployed: 'Sep 2021 – Oct 2022',
       techStack: [
         'react',
         'react-native',
