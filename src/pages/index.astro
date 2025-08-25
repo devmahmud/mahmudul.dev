@@ -18,110 +18,185 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
 ---
 
 <Layout title="Mahmudul Alam">
-  <main class="slide-enter-content flex flex-col gap-20">
-    <article class="flex flex-col gap-8">
-      <header>
-        <div class="flex flex-row flex-wrap gap-1">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl text-neutral-100">{'Hi, I’m'}</h1>
-          <h1
-            class="bg-gradient-to-br from-primary-400 to-secondary-600 bg-clip-text text-4xl md:text-5xl lg:text-6xl font-extrabold text-neutral-100 text-transparent"
-          >
-            {'<Mahmudul::Alam>'}
-          </h1>
-          <p class="wave text-4xl md:text-5xl lg:text-6xl">👋</p>
+  <main class="space-y-32">
+    <!-- Hero Section with Apple gradients -->
+    <section class="relative space-y-12">
+      <!-- Hero background glow - Modern style -->
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-violet-500/20 rounded-3xl blur-3xl"></div>
+      
+      <div class="relative space-y-8">
+        <div class="space-y-6">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-4">
+            <h1 class="text-3xl font-bold text-white sm:text-5xl lg:text-6xl xl:text-7xl">
+              Hi, I'm
+            </h1>
+            <h1 class="bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 bg-clip-text text-3xl font-extrabold text-transparent sm:text-5xl lg:text-6xl xl:text-7xl">
+              &lt;Mahmudul::Alam&gt;
+            </h1>
+            <span class="wave text-3xl sm:text-5xl lg:text-6xl xl:text-7xl">👋</span>
+          </div>
+          <h2 class="text-xl font-medium bg-gradient-to-r from-gray-300 to-gray-400 bg-clip-text text-transparent sm:text-2xl lg:text-3xl xl:text-4xl">মাহমুদুল আলম</h2>
         </div>
-        <h2 class="text-2xl md:text-3xl text-secondary-500">মাহমুদুল আলম</h2>
-      </header>
-      <h2 class="text-lg md:text-xl leading-relaxed" set:html={convertAsteriskToStrongTag(presentation.description)} />
-      <SocialLinks />
-    </article>
+        
+        <div>
+          <p class="text-lg leading-relaxed text-gray-300 sm:text-xl lg:text-2xl" set:html={convertAsteriskToStrongTag(presentation.description)} />
+        </div>
+        
+        <div class="pt-4 w-full overflow-x-auto">
+          <div class="min-w-fit">
+            <SocialLinks />
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <article class="flex flex-col gap-8">
-      <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-xl md:text-2xl text-neutral-100">
-          Selected projects ({projects.length})
-        </h3>
-      </header>
-      {projects.length === 0 && <p>Oops, I must work^^^^^</p>}
+    <!-- Projects Section with Apple glassmorphism -->
+    <section class="relative space-y-12">
+      <!-- Section background glow - Apple style -->
+      <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/15 to-purple-500/15 rounded-3xl blur-2xl"></div>
+      
+      <div class="relative space-y-8">
+        <div class="flex items-center justify-between">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-5xl">
+              Selected Projects
+            </h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full"></div>
+          </div>
+          <span class="text-lg font-medium text-gray-400">({projects.length})</span>
+        </div>
+        
+        {projects.length === 0 && (
+          <div class="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <p class="text-xl text-gray-300">Oops, I must work^^^^^</p>
+          </div>
+        )}
 
-      <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {projects.length !== 0 && projects.map((project) => <ProjectCard {...project} />)}
-      </section>
-    </article>
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {projects.length !== 0 && projects.map((project) => <ProjectCard {...project} />)}
+        </div>
+      </div>
+    </section>
 
-    <article class="flex flex-col gap-8">
-      <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-xl md:text-2xl text-neutral-100">Latest posts</h3>
-        <Link href="/posts" label="See all posts" isUnderline target="_self" />
-      </header>
-      {posts.length === 0 && <p>Soon, stay connected 👀...</p>}
+    <!-- Latest Posts Section -->
+    <section class="relative space-y-12">
+      <!-- Section background glow - Apple style -->
+      <div class="absolute inset-0 bg-gradient-to-r from-violet-500/15 to-purple-500/15 rounded-3xl blur-2xl"></div>
+      
+      <div class="relative space-y-8">
+        <div class="flex items-center justify-between">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-5xl">Latest Posts</h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-violet-400 to-purple-400 rounded-full"></div>
+          </div>
+          <Link href="/posts" label="View all posts" isUnderline target="_self" />
+        </div>
+        
+        {posts.length === 0 && (
+          <div class="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <p class="text-xl text-gray-300">Soon, stay connected 👀...</p>
+          </div>
+        )}
 
-      <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {
-          posts.length !== 0 &&
-            posts
-              .slice(0, 4)
-              .map((post) => (
-                <FeaturedPostCard
-                  publishedAt={post.data.publishedAt}
-                  title={post.data.title}
-                  description={post.data.description}
-                  slug={post.slug}
-                />
-              ))
-        }
-      </section>
-    </article>
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            posts.length !== 0 &&
+              posts
+                .slice(0, 3)
+                .map((post) => (
+                  <FeaturedPostCard
+                    publishedAt={post.data.publishedAt}
+                    title={post.data.title}
+                    description={post.data.description}
+                    slug={post.slug}
+                  />
+                ))
+          }
+        </div>
+      </div>
+    </section>
 
-    <article class="flex flex-col gap-8">
-      <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-xl md:text-2xl text-neutral-100">Planned posts</h3>
-        <Link href="/planned" label="See my plans" isUnderline target="_self" />
-      </header>
-      {posts.length === 0 && <p>Soon, stay connected 👀...</p>}
+    <!-- Planned Posts Section -->
+    <section class="relative space-y-12">
+      <!-- Section background glow - Modern style -->
+      <div class="absolute inset-0 bg-gradient-to-r from-purple-500/15 to-indigo-500/15 rounded-3xl blur-2xl"></div>
+      
+      <div class="relative space-y-8">
+        <div class="flex items-center justify-between">
+          <div class="space-y-2">
+            <h2 class="text-2xl font-bold text-white sm:text-3xl lg:text-4xl xl:text-5xl">Planned Posts</h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-purple-400 to-indigo-400 rounded-full"></div>
+          </div>
+          <Link href="/planned" label="See my plans" isUnderline target="_self" />
+        </div>
+        
+        {plannedPosts.length === 0 && (
+          <div class="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <p class="text-xl text-gray-300">Soon, stay connected 👀...</p>
+          </div>
+        )}
 
-      <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {
-          plannedPosts.length !== 0 ? (
-            plannedPosts
-              .slice(0, 4)
-              .map((post) => (
-                <FeaturedPostCard
-                  publishedAt={post.data.publishedAt}
-                  title={post.data.title}
-                  description={post.data.description}
-                  slug={post.slug}
-                  planned={post.data.planned}
-                />
-              ))
-          ) : (
-            <p>
-              No planned posts for a while, if you have any idea, please{' '}
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {
+            plannedPosts.length !== 0 ? (
+              plannedPosts
+                .slice(0, 3)
+                .map((post) => (
+                  <FeaturedPostCard
+                    publishedAt={post.data.publishedAt}
+                    title={post.data.title}
+                    description={post.data.description}
+                    slug={post.slug}
+                    planned={post.data.planned}
+                  />
+                ))
+            ) : (
+              <div class="col-span-full backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
+                <p class="text-xl text-gray-300">
+                  No planned posts for a while, if you have any idea, please{' '}
+                  <Link
+                    href={`mailto:${presentation.mail}`}
+                    label="contact me"
+                    class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+                  />
+                  .
+                </p>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section with Apple design -->
+    <section class="relative space-y-12">
+      <!-- Section background glow - Apple style -->
+      <div class="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-indigo-500/15 rounded-3xl blur-2xl"></div>
+      
+      <div class="relative space-y-8">
+        <div class="space-y-2">
+          <h2 class="text-4xl font-bold text-white sm:text-5xl">Get in Touch</h2>
+          <div class="h-1 w-20 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full"></div>
+        </div>
+        
+        <div class="max-w-3xl space-y-8">
+          <div class="backdrop-blur-2xl bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl">
+            <p class="text-xl text-gray-300">
+              Email me at{' '}
               <Link
                 href={`mailto:${presentation.mail}`}
-                label="contact me"
-                class="text-orange-500"
-              />
-              .
+                label={presentation.mail}
+                class="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+              />{' '}
+              or follow me via my social links.
             </p>
-          )
-        }
-      </section>
-    </article>
-
-    <article class="flex flex-col gap-8">
-      <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-xl md:text-2xl text-neutral-100">Get in touch</h3>
-      </header>
-      <p>
-        Email me at <Link
-          href={`mailto:${presentation.mail}`}
-          label={presentation.mail}
-          class="text-orange-500"
-        /> or follow me via my social links.
-      </p>
-
-      <SocialLinks />
-    </article>
+          </div>
+          
+          <div class="flex justify-center">
+            <SocialLinks />
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 </Layout>

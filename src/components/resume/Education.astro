@@ -6,12 +6,10 @@ import resume from '@/data/resume';
 <CardLayout title="Education">
   {
     resume.educations.map((item) => (
-      <div class="my-2 mb-6 grid gap-1 text-sm">
-        <h4 class="fw500 text-base">{item.institution}</h4>
-
-        <p class="fw200">
-          <span class="text-gray-500">{item.period} - </span>
-          {item.fieldOfStudy}
+      <div class="space-y-2">
+        <h4 class="text-lg font-semibold text-white">{item.institution}</h4>
+        <p class="text-slate-300">
+          <span class="text-indigo-400 font-medium">{item.period}</span> • {item.fieldOfStudy}
         </p>
       </div>
     ))

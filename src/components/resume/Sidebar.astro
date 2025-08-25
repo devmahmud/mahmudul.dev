@@ -3,24 +3,47 @@ import ButtonLink from '@/components/shared/ButtonLink.astro';
 import resume from '@/data/resume';
 ---
 
-<div
-  class="border-bottom border-b-10 mb-4 grid h-[inherit] gap-1 border border-neutral-700 text-center"
->
-  <div class="relative h-[16rem] text-gray-900">
-    <div class="h-[60%] bg-primary-900 p-2"></div>
-    <img
-      class="mx-auto mt-[-100px] h-[180px] w-[180px] rounded-full border-gray-900"
-      alt="Profile logo"
-      src={resume.profile.avatarUrl}
-    />
+<div class="group relative overflow-hidden rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 shadow-lg hover:bg-white/10 hover:border-white/20 hover:shadow-xl transition-all duration-300">
+  <!-- Cool border animation -->
+  <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+    <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-violet-500/20 rounded-2xl"></div>
+    <div class="absolute inset-0 p-[1px] rounded-2xl bg-gradient-to-r from-indigo-500/30 via-purple-500/30 to-violet-500/30">
+      <div class="w-full h-full bg-slate-950/90 backdrop-blur-2xl rounded-2xl"></div>
+    </div>
   </div>
 
-  <div class="info grid gap-4 p-6 pt-0">
-    <h2 class="text-2xl font-semibold">{resume.profile.name}</h2>
-    <p>Python || Javascript || Learner || Open Source Enthusiast</p>
+  <div class="relative text-center">
+    <!-- Profile Header with Gradient -->
+    <div class="relative p-8 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-violet-500/20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10"></div>
+      <div class="relative">
+        <img
+          class="mx-auto h-32 w-32 rounded-full border-4 border-white/20 shadow-2xl ring-4 ring-indigo-500/20"
+          alt="Profile"
+          src={resume.profile.avatarUrl}
+        />
+      </div>
+    </div>
 
-    <ButtonLink class="mx-auto w-full text-pink-400 print:hidden" href={resume.resumeURL}>
-      Resume
-    </ButtonLink>
+    <!-- Profile Info -->
+    <div class="relative p-6 space-y-4">
+      <h2 class="text-2xl font-bold bg-gradient-to-r from-indigo-300 via-purple-300 to-violet-300 bg-clip-text text-transparent">
+        {resume.profile.name}
+      </h2>
+      
+      <div class="flex flex-wrap justify-center gap-2 text-sm">
+        {["Python", "JavaScript", "Learner", "Open Source"].map((tag) => (
+          <span class="px-3 py-1 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 text-indigo-200 hover:from-indigo-500/30 hover:to-purple-500/30 transition-all duration-200">
+            {tag}
+          </span>
+        ))}
+      </div>
+
+      <div class="pt-4">
+        <ButtonLink class="w-full print:hidden" href={resume.resumeURL}>
+          Download Resume
+        </ButtonLink>
+      </div>
+    </div>
   </div>
 </div>

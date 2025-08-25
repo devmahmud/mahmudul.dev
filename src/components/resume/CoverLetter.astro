@@ -3,13 +3,30 @@ import CardLayout from './CardLayout.astro';
 import Link from '@/components/shared/Link.astro';
 ---
 
-<CardLayout title="Cover Letter">
-  <p class="my1 mx0 text-sm">
-    My name is Mahmudul Alam and I'm a software developer. I'm from Bangladesh, living in Dhaka and
-    currently working as a Full-time Software Engineer at Tero Labs. You can find me on <Link
-      label="Twitter"
-      href="https://twitter.com/expelmahmud"
-    />
-    , or on <Link label="LinkedIn" href="https://www.linkedin.com/in/devmahmud" />
-  </p>
+<CardLayout title="About Me">
+  <div class="space-y-4">
+    <p class="text-slate-300 leading-relaxed">
+      My name is Mahmudul Alam and I'm a passionate software developer from Bangladesh, living in Dhaka. 
+      Currently working as a Full-time Software Engineer at 
+      <span class="text-indigo-400 font-medium">Tero Labs</span>, 
+      I focus on creating innovative web solutions and beautiful user experiences.
+    </p>
+    
+    <div class="flex items-center gap-4 pt-2">
+      <span class="text-slate-400 text-sm">Connect with me:</span>
+      <div class="flex gap-3">
+        <Link
+          label="Twitter"
+          href="https://twitter.com/expelmahmud"
+          class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+        />
+        <span class="text-slate-600">•</span>
+        <Link 
+          label="LinkedIn" 
+          href="https://www.linkedin.com/in/devmahmud"
+          class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200"
+        />
+      </div>
+    </div>
+  </div>
 </CardLayout>

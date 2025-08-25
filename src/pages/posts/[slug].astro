@@ -52,12 +52,11 @@ const og = {
 ---
 
 <Layout title={title} og={og}>
-  <div class="gap-10 lg:flex lg:items-start">
-    {!!headings.length && <TOC headings={headings} />}
-    <main class="post min-w-prose mx-auto flex w-full flex-col gap-4">
+  <div class="flex gap-8 items-start">
+    <main class="post min-w-prose flex-1 mx-auto flex w-full flex-col gap-4 max-w-4xl">
       <header role="presentation">
         <h1
-          class={"text-lg font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-br from-sky-300 to-sky-800"}
+          class={"text-lg font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-800"}
         >
           {title}
         </h1>
@@ -94,6 +93,7 @@ const og = {
         <Content />
       </div>
     </main>
+    {!!headings.length && <TOC headings={headings} />}
   </div>
   <CommentSection />
 </Layout>

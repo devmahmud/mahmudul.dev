@@ -31,13 +31,14 @@
 
 :root {
   color-scheme: dark;
-  --c-bg: #050505;
-  --c-scrollbar: #111;
-  --c-scrollbar-hover: #222;
+  --c-bg: #0f172a;
+  --c-scrollbar: #1e293b;
+  --c-scrollbar-hover: #334155;
 }
 
 ::selection {
-  background: #8884;
+  background: rgba(168, 85, 247, 0.3);
+  color: #ffffff;
 }
 
 * {
@@ -45,14 +46,17 @@
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
 }
 ::-webkit-scrollbar:horizontal {
-  height: 6px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track,
 ::-webkit-scrollbar-corner {
@@ -68,17 +72,17 @@ body {
 }
 
 body {
-  @apply bg-zinc-900 text-zinc-100;
+  @apply bg-slate-950 text-white;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 hr {
-  @apply border-zinc-700;
+  @apply border-slate-800;
 }
 
 pre {
-  @apply !px-0 rounded-lg;
+  @apply !px-0 rounded-2xl;
 }
 
 code {
@@ -95,16 +99,12 @@ pre > code {
   @apply max-w-[88rem] sm:text-lg md:text-xl !leading-7 sm:!leading-9;
 }
 
-/* Improved card hover effects */
-.group:hover {
-  transform: translateY(-2px);
-  transition: all 0.3s ease;
-}
+/* Enhanced card hover effects - removed position change for stability */
 
 /* Better focus states - only for keyboard navigation */
 a:focus-visible,
 button:focus-visible {
-  @apply outline-none ring-2 ring-primary-400 ring-offset-2 ring-offset-neutral-900;
+  @apply outline-none ring-2 ring-purple-400 ring-offset-2 ring-offset-slate-950;
 }
 
 /* Remove focus outline for mouse clicks */
@@ -113,20 +113,9 @@ button:focus:not(:focus-visible) {
   @apply outline-none ring-0;
 }
 
-/* Improved scrollbar for larger screens */
-@media (min-width: 768px) {
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar:horizontal {
-    height: 8px;
-  }
-}
-
-/* Enhanced gradient backgrounds */
+/* Enhanced gradient backgrounds (do not animate by default) */
 .bg-gradient-to-br {
   background-size: 200% 200%;
-  animation: gradient-shift 8s ease infinite;
 }
 
 @keyframes gradient-shift {
@@ -141,15 +130,9 @@ button:focus:not(:focus-visible) {
   }
 }
 
-/* Improved text selection */
-::selection {
-  background: rgba(255, 138, 77, 0.3);
-  color: #ffffff;
-}
-
 /* Better focus rings - only for keyboard navigation */
 .focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-400 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
 }
 
 /* Line clamp utilities */
@@ -168,7 +151,7 @@ button:focus:not(:focus-visible) {
 }
 
 [data-line] {
-  @apply border-l-2 border-l-transparent px-2 border-l-2 border-l-transparent;
+  @apply border-l-2 border-l-transparent px-2;
 }
 
 [data-highlighted-line] {
@@ -177,7 +160,7 @@ button:focus:not(:focus-visible) {
 }
 
 [data-highlighted-chars] {
-  @apply bg-zinc-600/50 rounded;
+  @apply bg-slate-600/50 rounded;
   box-shadow: 0 0 0 4px rgb(82 82 91 / 0.5);
 }
 
@@ -328,5 +311,93 @@ button:focus:not(:focus-visible) {
   }
   100% {
     transform: rotate(0deg);
+  }
+}
+
+/* Enhanced typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-bold tracking-tight;
+}
+
+/* Improved link styling */
+a {
+  @apply transition-all duration-300;
+}
+
+/* Better button styling */
+button {
+  @apply transition-all duration-300;
+}
+
+/* Enhanced card shadows */
+.shadow-2xl {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke,
+    opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+/* Glassmorphism effects */
+.glass {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Gradient text animations */
+.gradient-text {
+  background: linear-gradient(45deg, #a855f7, #ec4899, #3b82f6, #a855f7);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Removed floating animation to prevent unwanted movement */
+
+/* Glow effects */
+.glow {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.glow:hover {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+}
+
+/* Pulse animation for gradient elements */
+@keyframes pulse-gradient {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulse-gradient {
+  animation: pulse-gradient 2s ease-in-out infinite;
+}
+
+/* Respect user reduced motion preference globally */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0ms !important;
+    scroll-behavior: auto !important;
   }
 }

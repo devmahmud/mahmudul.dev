@@ -7,29 +7,37 @@ import MdiLinkedin from "~icons/mdi/linkedin";
 import MdiStackoverflow from '~icons/mdi/stackoverflow';
 ---
 
-<ul role="list" class="flex flex-row gap-4">
+<ul role="list" class="flex items-center space-x-3 sm:space-x-6">
   <li>
-    <ButtonLink href="https://github.com/devmahmud">
-      <MdiGithub />
-      <span class="hidden sm:block">Github</span>
+    <ButtonLink href="https://github.com/devmahmud" class="group">
+      <div class="relative">
+        <MdiGithub class="w-6 h-6 text-gray-300 group-hover:text-gray-100 transition-colors duration-300" />
+      </div>
+      <span class="hidden md:block text-sm font-medium text-gray-300 group-hover:text-gray-100 transition-colors duration-300">Github</span>
     </ButtonLink>
   </li>
   <li>
-    <ButtonLink href="https://www.linkedin.com/in/devmahmud">
-      <MdiLinkedin />
-      <span class="hidden sm:block">LinkedIn</span>
+    <ButtonLink href="https://www.linkedin.com/in/devmahmud" class="group">
+      <div class="relative">
+        <MdiLinkedin class="w-6 h-6 text-gray-300 group-hover:text-blue-400 transition-colors duration-300" />
+      </div>
+      <span class="hidden md:block text-sm font-medium text-gray-300 group-hover:text-blue-400 transition-colors duration-300">LinkedIn</span>
     </ButtonLink>
   </li>
   <li>
-    <ButtonLink href="https://twitter.com/mahmudul__alam">
-      <MdiTwitter />
-      <span class="hidden sm:block">Twitter</span>
+    <ButtonLink href="https://twitter.com/mahmudul__alam" class="group">
+      <div class="relative">
+        <MdiTwitter class="w-6 h-6 text-gray-300 group-hover:text-sky-400 transition-colors duration-300" />
+      </div>
+      <span class="hidden md:block text-sm font-medium text-gray-300 group-hover:text-sky-400 transition-colors duration-300">Twitter</span>
     </ButtonLink>
   </li>
   <li>
-    <ButtonLink href="https://stackoverflow.com/users/10956991/mahmudul-alam">
-      <MdiStackoverflow />
-      <span class="hidden sm:block">Stackoverflow</span>
+    <ButtonLink href="https://stackoverflow.com/users/10956991/mahmudul-alam" class="group">
+      <div class="relative">
+        <MdiStackoverflow class="w-6 h-6 text-gray-300 group-hover:text-orange-400 transition-colors duration-300" />
+      </div>
+      <span class="hidden md:block text-sm font-medium text-gray-300 group-hover:text-orange-400 transition-colors duration-300">Stackoverflow</span>
     </ButtonLink>
   </li>
 </ul>

@@ -27,6 +27,7 @@
     "astro": "^3.0.3",
     "astro-seo": "0.7.2",
     "chroma-js": "^2.4.2",
+    "gsap": "^3.13.0",
     "mdast-util-to-string": "^4.0.0",
     "odometer": "^0.4.8",
     "preact": "^10.16.0",

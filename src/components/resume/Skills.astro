@@ -6,18 +6,31 @@ const skills = resume.skills;
 ---
 
 <CardLayout title="Skills">
+  <style>
+    .skill-item:hover .skill-tooltip {
+      opacity: 1;
+    }
+  </style>
   {
     skills.map((skill) => (
-      <div class="my-2 grid gap-1 text-sm">
-        <h4 class="text-base font-medium">{skill.category}</h4>
-        <div class="m-2 grid grid-cols-6 gap-2">
+      <div class="space-y-3">
+        <h4 class="text-lg font-semibold text-white">{skill.category}</h4>
+        <div class="grid grid-cols-4 sm:grid-cols-6 gap-4">
           {skill.stacks.map((item) => (
-            <img
-              src={item.icon}
-              alt={item.name}
-              class="h-[20px] w-[20px]"
-              title={`${item.name} - ${Array(item.rate).fill('☆').join('')}`}
-            />
+            <div class="skill-item relative">
+              <img
+                src={item.icon}
+                alt={item.name}
+                class="h-[32px] w-[32px] transition-opacity duration-200 rounded-lg"
+                title={`${item.name} - ${Array(item.rate).fill('★').join('')}`}
+              />
+              <div class="skill-tooltip absolute -bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 transition-opacity duration-200 z-20 pointer-events-none">
+                <span class="text-xs text-slate-300 whitespace-nowrap bg-slate-800/90 backdrop-blur-sm border border-slate-600/50 px-3 py-1.5 rounded-lg shadow-lg">
+                  {item.name}
+                </span>
+                <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1 w-2 h-2 bg-slate-800/90 border-l border-t border-slate-600/50 rotate-45"></div>
+              </div>
+            </div>
           ))}
         </div>
       </div>
