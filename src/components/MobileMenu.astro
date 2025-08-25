@@ -146,12 +146,15 @@ const pathname = removeTrailingSlash(Astro.url.pathname);
       }
     }
 
-    // Bind events
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('Mobile menu button clicked');
-      toggleMenu();
+    // Use event delegation to handle button clicks
+    document.addEventListener('click', (e) => {
+      const target = e.target as Element;
+      if (target.closest('[data-mobile-menu-toggle]')) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Mobile menu button clicked');
+        toggleMenu();
+      }
     });
 
     // Close when clicking links
@@ -195,4 +198,13 @@ const pathname = removeTrailingSlash(Astro.url.pathname);
 
   // Re-initialize on Astro page transitions
   document.addEventListener('astro:page-load', initMobileMenu);
+  
+  // Also re-initialize on view transitions (for newer Astro versions)
+  document.addEventListener('astro:after-swap', initMobileMenu);
+  
+  // Fallback: re-initialize after a short delay to ensure DOM is ready
+  setTimeout(initMobileMenu, 100);
+  
+  // Additional fallback for navigation
+  window.addEventListener('load', initMobileMenu);
 </script>
