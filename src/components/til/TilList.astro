@@ -9,6 +9,6 @@ export interface Props {
 const { tils } = Astro.props;
 ---
 
-<article class="flex flex-col gap-4">
+<article class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
   {tils.map((til) => (<TilCard til={til} />))}
 </article>

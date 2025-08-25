@@ -6,7 +6,7 @@ const pathname = removeTrailingSlash(Astro.url.pathname);
 const notInHome = pathname !== "/";
 ---
 
-<header class="z-40 flex w-full flex-col gap-2 md:flex-row md:justify-between">
+<header class="z-40 flex w-full flex-col gap-4 md:flex-row md:justify-between md:items-center">
   {
     notInHome ? (
       <a href="/" class="text-secondary-500 hover:animate-pulse">
@@ -20,7 +20,7 @@ const notInHome = pathname !== "/";
   }
 
   <nav role="navigation">
-    <ul role="list" class="flex flex-row gap-2">
+    <ul role="list" class="flex flex-row gap-4 text-base">
       <li>
         <a
           href="/"

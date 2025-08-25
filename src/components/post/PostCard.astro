@@ -25,58 +25,67 @@ const isPlanned = post.data.planned;
 
 <a
   class:list={[
-    "group flex flex-col gap-2 border-t border-neutral-700 py-4 transition-all",
+    "group flex h-full w-full cursor-pointer flex-col justify-between rounded-lg border border-neutral-700 bg-neutral-800/30 p-6 transition-all duration-300 hover:-translate-y-1 hover:border-neutral-500 hover:bg-neutral-800/50 hover:shadow-xl hover:shadow-neutral-900/50",
     !isPlanned && "hover:text-neutral-100",
   ]}
   href={post.data.planned ? null : `/posts/${post.slug}`}
 >
-  <div class="flex w-full items-center justify-between">
-    <h2 class="text-lg">{post.data.title}</h2>
-
-    <div class="flex flex-row items-center gap-4">
+  <div class="flex flex-col gap-4">
+    <div class="flex items-start justify-between gap-3">
+      <h3 class="text-lg font-semibold text-neutral-100 line-clamp-2 group-hover:text-white">
+        {post.data.title}
+      </h3>
       {
-        post.data.planned ? (
-          <span class="rounded-lg bg-secondary-700 px-2 py-1 text-xs text-neutral-100">
-            Planned
-          </span>
-        ) : (
-          <>
-            <p>{formatDate(post.data.publishedAt)}</p>
-            <svg
-              width="18"
-              height="18"
-              viewBox="0 0 18 18"
-              fill="none"
-              class="transition-all duration-300 group-hover:translate-x-1"
-            >
-              <path
-                d="M5.25 12.75L12.75 5.25"
-                stroke="#999999"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M5.25 5.25H12.75V12.75"
-                stroke="#999999"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </>
+        !post.data.planned && (
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            class="mt-1 flex-shrink-0 text-neutral-400 transition-all duration-300 group-hover:translate-x-1 group-hover:text-neutral-300"
+          >
+            <path
+              d="M6 14L14 6"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M6 6H14V14"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         )
       }
     </div>
+    
+    <p class="text-sm text-neutral-400 line-clamp-3 group-hover:text-neutral-300">
+      {post.data.description}
+    </p>
   </div>
-  <p>{post.data.description}</p>
 
-  <div class="flex flex-row items-center gap-1 text-sm text-gray-500">
+  <div class="mt-4 flex items-center justify-between">
     {
       isPlanned ? (
-        <Upvote client:only slug={post.slug} />
+        <div class="flex items-center gap-2">
+          <Upvote client:only slug={post.slug} />
+        </div>
       ) : (
-        <>
-          <Eye /> <Odometer client:only data={views} /> views
-        </>
+        <div class="flex items-center gap-2 text-xs text-neutral-500 group-hover:text-neutral-400">
+          <Eye />
+          <Odometer client:only data={views} />
+          <span>views</span>
+        </div>
+      )
+    }
+    
+    {
+      !isPlanned && (
+        <span class="text-xs text-neutral-500 group-hover:text-neutral-400">
+          {formatDate(post.data.publishedAt)}
+        </span>
       )
     }
   </div>

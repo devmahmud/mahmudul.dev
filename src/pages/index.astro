@@ -22,41 +22,41 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
     <article class="flex flex-col gap-8">
       <header>
         <div class="flex flex-row flex-wrap gap-1">
-          <h1 class="text-3xl text-neutral-100">{'Hi, I’m'}</h1>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl text-neutral-100">{'Hi, I’m'}</h1>
           <h1
-            class="bg-gradient-to-br from-primary-400 to-secondary-600 bg-clip-text text-3xl font-extrabold text-neutral-100 text-transparent"
+            class="bg-gradient-to-br from-primary-400 to-secondary-600 bg-clip-text text-4xl md:text-5xl lg:text-6xl font-extrabold text-neutral-100 text-transparent"
           >
             {'<Mahmudul::Alam>'}
           </h1>
-          <p class="wave text-3xl">👋</p>
+          <p class="wave text-4xl md:text-5xl lg:text-6xl">👋</p>
         </div>
-        <h2 class="text-xl text-secondary-500">মাহমুদুল আলম</h2>
+        <h2 class="text-2xl md:text-3xl text-secondary-500">মাহমুদুল আলম</h2>
       </header>
-      <h2 class="leading-6" set:html={convertAsteriskToStrongTag(presentation.description)} />
+      <h2 class="text-lg md:text-xl leading-relaxed" set:html={convertAsteriskToStrongTag(presentation.description)} />
       <SocialLinks />
     </article>
 
     <article class="flex flex-col gap-8">
       <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-lg text-neutral-100">
+        <h3 class="text-xl md:text-2xl text-neutral-100">
           Selected projects ({projects.length})
         </h3>
       </header>
       {projects.length === 0 && <p>Oops, I must work^^^^^</p>}
 
-      <section class="flex flex-col gap-4">
+      <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {projects.length !== 0 && projects.map((project) => <ProjectCard {...project} />)}
       </section>
     </article>
 
     <article class="flex flex-col gap-8">
       <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-lg text-neutral-100">Latest posts</h3>
+        <h3 class="text-xl md:text-2xl text-neutral-100">Latest posts</h3>
         <Link href="/posts" label="See all posts" isUnderline target="_self" />
       </header>
       {posts.length === 0 && <p>Soon, stay connected 👀...</p>}
 
-      <section class="flex flex-col gap-4 md:flex-row md:flex-wrap">
+      <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {
           posts.length !== 0 &&
             posts
@@ -75,12 +75,12 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
 
     <article class="flex flex-col gap-8">
       <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-lg text-neutral-100">Planned posts</h3>
+        <h3 class="text-xl md:text-2xl text-neutral-100">Planned posts</h3>
         <Link href="/planned" label="See my plans" isUnderline target="_self" />
       </header>
       {posts.length === 0 && <p>Soon, stay connected 👀...</p>}
 
-      <section class="flex flex-col gap-4 md:flex-row md:flex-wrap">
+      <section class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {
           plannedPosts.length !== 0 ? (
             plannedPosts
@@ -111,7 +111,7 @@ const plannedPosts = allPosts.filter((post) => post.data.planned);
 
     <article class="flex flex-col gap-8">
       <header class="flex w-full flex-row justify-between gap-2">
-        <h3 class="text-lg text-neutral-100">Get in touch</h3>
+        <h3 class="text-xl md:text-2xl text-neutral-100">Get in touch</h3>
       </header>
       <p>
         Email me at <Link
