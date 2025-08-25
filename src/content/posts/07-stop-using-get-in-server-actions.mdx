@@ -1,0 +1,409 @@
+---
+title: "Stop Using GET Inside Server Actions"
+publishedAt: 2025-08-25
+description: "Learn why using GET inside Next.js Server Actions creates unnecessary round trips, how to fetch data efficiently with React Server Components, and when to use Server Actions the right way — with fun analogies and diagrams."
+slug: "stop-using-get-in-server-actions"
+cover: "src/assets/posts/07/cover.jpg"
+coverAlt: "The logo of Stop Using GET Inside Server Actions"
+ogImage: "/og-posts/07/cover.jpg"
+---
+
+
+# 🚀 Stop Using GET Inside Server Actions
+
+> **TL;DR**: Using GET requests inside Server Actions creates unnecessary round trips and hurts performance. Use React Server Components for data fetching and Server Actions only for mutations (POST/PUT/DELETE).
+
+If you're diving into **Next.js App Router** and experimenting with **Server Actions**, you might be tempted to wrap every fetch in them — including `GET` requests.
+
+But here's the catch: **GET inside Server Actions is like calling your mom to ask if you can text her.** Totally unnecessary. 🙃
+
+This guide will show you why this pattern hurts performance, when to use each approach, and how to migrate existing code for better user experience.
+
+Let's break it down.
+
+---
+
+## ⚡ Server Actions 101
+
+Server Actions are special async functions that run on the server. You usually trigger them via:
+
+* **Form submissions**
+* **Button clicks**
+* **`startTransition` hooks**
+
+They're serialized, sent over the wire, and executed in the server runtime.
+
+👉 **Why POST?** Server Actions use POST requests for security and consistency. Unlike GET requests (which can be cached, bookmarked, or logged), POST requests ensure mutations are intentional and can't be accidentally triggered by web crawlers or browser prefetching.
+
+```tsx
+// actions.ts
+"use server";
+
+export async function addTodo(formData: FormData) {
+  const title = formData.get("title");
+
+  await fetch("https://api.example.com/todos", {
+    method: "POST",
+    body: JSON.stringify({ title }),
+  });
+}
+```
+
+---
+
+## ❌ The GET Trap
+
+Now imagine you try this:
+
+```tsx
+"use server";
+
+export async function getTodos() {
+  const res = await fetch("https://api.example.com/todos");
+  return res.json();
+}
+```
+
+And then call it from your component:
+
+```tsx
+'use client';
+
+import { useState, useEffect } from 'react';
+import { getTodos } from "./actions";
+
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+export default function TodoList() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getTodos()
+      .then(setTodos)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div>Loading todos...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  return <pre>{JSON.stringify(todos, null, 2)}</pre>;
+}
+```
+
+💥 Problem: You just created **two round trips**.
+
+1. Client → Server Action (`POST` request to run `getTodos`)
+2. Server Action → API (`GET` request for todos)
+
+This is slower than if you had just fetched the data directly in a **React Server Component**.
+
+---
+
+## 🔍 Visualizing the Double Round Trip
+
+Here’s a simple diagram to show the problem:
+
+<svg width="500" height="300" xmlns="http://www.w3.org/2000/svg">
+ 
+  <rect x="0" y="0" width="500" height="300" fill="#f0f0f0"/>
+ 
+  <rect x="50" y="20" width="100" height="40" rx="5" fill="#f0f0f0" stroke="#000"/>
+  <text x="100" y="45" text-anchor="middle">Client</text>
+  
+  <rect x="200" y="20" width="100" height="40" rx="5" fill="#f0f0f0" stroke="#000"/>
+  <text x="250" y="45" text-anchor="middle">ServerAction</text>
+  
+  <rect x="350" y="20" width="100" height="40" rx="5" fill="#f0f0f0" stroke="#000"/>
+  <text x="400" y="45" text-anchor="middle">API</text>
+
+  
+  <line x1="100" y1="60" x2="100" y2="280" stroke="#000" stroke-dasharray="5,5"/>
+  <line x1="250" y1="60" x2="250" y2="280" stroke="#000" stroke-dasharray="5,5"/>
+  <line x1="400" y1="60" x2="400" y2="280" stroke="#000" stroke-dasharray="5,5"/>
+
+ 
+  <line x1="100" y1="100" x2="250" y2="100" stroke="#000" marker-end="url(#arrowhead)"/>
+  <text x="175" y="95" text-anchor="middle">POST (run getTodos)</text>
+
+  <line x1="250" y1="150" x2="400" y2="150" stroke="#000" marker-end="url(#arrowhead)"/>
+  <text x="325" y="145" text-anchor="middle">GET /todos</text>
+
+  <line x1="400" y1="200" x2="250" y2="200" stroke="#000" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <text x="325" y="195" text-anchor="middle">todos JSON</text>
+
+  <line x1="250" y1="250" x2="100" y2="250" stroke="#000" stroke-dasharray="5,5" marker-end="url(#arrowhead)"/>
+  <text x="175" y="245" text-anchor="middle">todos JSON</text>
+
+  
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#000"/>
+    </marker>
+  </defs>
+</svg>
+
+⚡ Notice how the client goes through an extra **middleman**. That's wasted time.
+
+---
+
+## 📊 Performance Impact
+
+Let's put some numbers to this problem:
+
+| Approach | Round Trips | Typical Time | Caching |
+|----------|-------------|--------------|---------|
+| **Server Action + GET** | 2 | ~400-800ms | ❌ No caching |
+| **React Server Component** | 1 | ~200-400ms | ✅ Built-in caching |
+
+**Real-world example:**
+- Server Action approach: 600ms (300ms client→server + 300ms server→API)
+- RSC approach: 250ms (direct server→API at render time)
+
+That's a **58% performance improvement** just by using the right pattern! 🚀
+
+The performance gap widens with:
+- **Slower networks** (mobile users suffer more)
+- **Geographic distance** (extra hop compounds latency)
+- **Heavy payloads** (serialization overhead doubles)
+
+---
+
+## ✅ The Right Way to Fetch Data
+
+In **React Server Components**, you can fetch directly. No extra hops.
+
+```tsx
+// app/todos/page.tsx
+interface Todo {
+  id: string;
+  title: string;
+  completed: boolean;
+}
+
+export default async function TodosPage() {
+  const todos: Todo[] = await fetch("https://api.example.com/todos", {
+    cache: 'force-cache', // Cache for 1 hour
+    next: { revalidate: 3600 }
+  }).then((res) => {
+    if (!res.ok) throw new Error('Failed to fetch todos');
+    return res.json();
+  });
+
+  return (
+    <div>
+      <h1>My Todos</h1>
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id} className={todo.completed ? 'completed' : ''}>
+            {todo.title}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+⚡ This happens **at render time** on the server, streamed to the client. Super efficient.
+
+**Key benefits:**
+- ✅ **Built-in caching** with Next.js fetch extensions
+- ✅ **Automatic revalidation** keeps data fresh
+- ✅ **Streaming support** for better perceived performance
+- ✅ **Error boundaries** can catch and handle failures gracefully
+
+---
+
+## 🎯 When to Use Server Actions
+
+* **Mutations (POST/PUT/PATCH/DELETE)**
+
+  * Adding a todo
+  * Deleting a user
+  * Updating profile settings
+
+* **Never for pure GETs** (unless you’re doing something weird like combining data after a mutation).
+
+Example mutation with UI:
+
+```tsx
+// app/todos/page.tsx
+import { addTodo } from "./actions";
+
+export default function TodosPage() {
+  return (
+    <form action={addTodo}>
+      <input name="title" placeholder="New Todo" />
+      <button type="submit">Add</button>
+    </form>
+  );
+}
+```
+
+That's the sweet spot for Server Actions. 🚀
+
+---
+
+## 🤔 Edge Cases: When GET in Server Actions Might Be OK
+
+While rare, there are a few scenarios where GET in Server Actions could be justified:
+
+### 1. **Data Transformation After Mutation**
+```tsx
+"use server";
+
+export async function createUserAndFetchDashboard(formData: FormData) {
+  // First, create the user (mutation)
+  const user = await createUser(formData);
+  
+  // Then fetch their personalized dashboard data
+  // This GET is acceptable because it depends on the mutation result
+  const dashboard = await fetch(`/api/dashboard/${user.id}`);
+  
+  return { user, dashboard: await dashboard.json() };
+}
+```
+
+### 2. **Combining Multiple Data Sources**
+```tsx
+"use server";
+
+export async function searchAndFilter(query: string, filters: string[]) {
+  // Complex server-side logic that combines multiple APIs
+  const [searchResults, userPrefs, recommendations] = await Promise.all([
+    fetch(`/api/search?q=${query}`),
+    fetch(`/api/user-preferences`),
+    fetch(`/api/recommendations`)
+  ]);
+  
+  // Server-side filtering logic too complex for client
+  return combineAndFilter(searchResults, userPrefs, recommendations, filters);
+}
+```
+
+### 3. **Security-Sensitive Operations**
+```tsx
+"use server";
+
+export async function getAdminData(userId: string) {
+  // Server-side permission checking before data access
+  const hasPermission = await checkAdminPermissions(userId);
+  if (!hasPermission) throw new Error('Unauthorized');
+  
+  return fetch('/api/admin/sensitive-data');
+}
+```
+
+**⚠️ Rule of thumb**: Only use GET in Server Actions when you need server-side logic that can't be done in RSCs.
+
+---
+
+## 🚀 Migration Guide
+
+Already using GET in Server Actions? Here's how to migrate:
+
+### Step 1: **Identify GET Server Actions**
+```bash
+# Search your codebase for the pattern
+grep -r "use server" --include="*.ts" --include="*.tsx" . | xargs grep -l "fetch.*GET\|fetch.*method.*GET"
+```
+
+### Step 2: **Move to Server Components**
+```tsx
+// ❌ Before: GET in Server Action
+"use server";
+export async function getUser(id: string) {
+  return fetch(`/api/users/${id}`).then(res => res.json());
+}
+
+// ✅ After: Direct fetch in RSC
+export default async function UserProfile({ id }: { id: string }) {
+  const user = await fetch(`/api/users/${id}`, {
+    next: { revalidate: 300 } // Cache for 5 minutes
+  }).then(res => res.json());
+  
+  return <div>{user.name}</div>;
+}
+```
+
+### Step 3: **Update Client Components**
+```tsx
+// ❌ Before: Calling Server Action from client
+'use client';
+export function UserDisplay({ id }: { id: string }) {
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+    getUser(id).then(setUser); // Server Action call
+  }, [id]);
+  
+  return user ? <div>{user.name}</div> : <div>Loading...</div>;
+}
+
+// ✅ After: Pass data from Server Component
+export default async function UserPage({ id }: { id: string }) {
+  const user = await fetch(`/api/users/${id}`).then(res => res.json());
+  
+  return <UserDisplay user={user} />; // Pass as prop
+}
+
+'use client';
+export function UserDisplay({ user }: { user: User }) {
+  return <div>{user.name}</div>; // No loading state needed!
+}
+```
+
+### Step 4: **Handle Dynamic Data**
+For data that changes frequently, use `revalidatePath` or `revalidateTag`:
+
+```tsx
+// actions.ts
+"use server";
+import { revalidatePath } from 'next/cache';
+
+export async function updateUser(formData: FormData) {
+  await updateUserInDB(formData);
+  revalidatePath('/profile'); // Refresh the cached data
+}
+```
+
+---
+
+## 🎉 TL;DR
+
+* **GET → Use React Server Components**
+* **POST → Use Server Actions**
+* Don’t wrap GETs in Server Actions unless you like extra lag 😅
+
+---
+
+## 🍪 Fun Analogy
+
+Think of it like this:
+
+* **GET in RSC** → Walking straight to the fridge to grab cookies.
+* **GET in Server Action** → Calling your roommate to ask them to go to the fridge, grab cookies, and bring them to you. Then they call the bakery to bake cookies first. 🙃
+
+One is instant. The other? A comedy of delays.
+
+So next time you're tempted to use `GET` in a Server Action… just walk to the fridge yourself. 🍪✨
+
+---
+
+## 📚 Related Articles
+
+- [Next.js App Router Documentation](https://nextjs.org/docs/app)
+- [React Server Components Deep Dive](https://react.dev/reference/react/use-server)
+- [Server Actions Best Practices](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions)
+- [Performance Optimization in Next.js](https://nextjs.org/docs/app/building-your-application/optimizing/bundle-analyzer)
+
+---
+
+**Tags:** `Next.js`, `React`, `Server Actions`, `Performance`, `App Router`, `Server Components`, `Web Development`

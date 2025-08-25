@@ -30,6 +30,34 @@
   @apply list-disc;
 }
 
+.post table {
+  @apply w-full border-collapse border border-zinc-700 rounded-lg overflow-hidden my-6;
+}
+
+.post thead {
+  @apply bg-zinc-800;
+}
+
+.post th {
+  @apply border border-zinc-700 px-4 py-3 text-left font-semibold text-neutral-100;
+}
+
+.post td {
+  @apply border border-zinc-700 px-4 py-3;
+}
+
+.post tbody tr:nth-child(odd) {
+  @apply bg-zinc-900;
+}
+
+.post tbody tr:nth-child(even) {
+  @apply bg-zinc-800/50;
+}
+
+.post tbody tr:hover {
+  @apply bg-zinc-700/30 transition-colors duration-200;
+}
+
 .post blockquote {
   @apply flex flex-row gap-2 before:block before:h-auto before:w-1 before:max-w-[1px] before:bg-red-400 before:content-[''];
 }
@@ -38,8 +66,7 @@ div[data-rehype-pretty-code-fragment] {
   @apply relative w-full rounded-md;
 }
 
-.post
-  div[data-rehype-pretty-code-fragment]:has([data-rehype-pretty-code-title]) {
+.post div[data-rehype-pretty-code-fragment]:has([data-rehype-pretty-code-title]) {
   @apply pt-7 lg:pt-10;
 }
 
