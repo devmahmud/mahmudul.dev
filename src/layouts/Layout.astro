@@ -27,10 +27,10 @@ const { title, og } = Astro.props;
   <SEOTags title={title} og={og} />
 
   <body class="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 antialiased overflow-x-hidden">
-    <!-- Modern gradient background (motion-safe) -->
+    <!-- Gradient background -->
     <div class="fixed inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 motion-safe:animate-gradient"></div>
     
-    <!-- Modern floating orbs -->
+    <!-- Floating orbs -->
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
       <div class="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-indigo-500/8 to-purple-500/8 rounded-full blur-3xl motion-safe:animate-pulse"></div>
       <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-violet-500/8 to-purple-500/8 rounded-full blur-3xl motion-safe:animate-pulse delay-1000"></div>
@@ -40,9 +40,9 @@ const { title, og } = Astro.props;
     <!-- Subtle noise texture overlay -->
     <div class="fixed inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=&quot;0 0 200 200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cfilter id=&quot;noise&quot;%3E%3CfeTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.65&quot; numOctaves=&quot;3&quot; stitchTiles=&quot;stitch&quot;/%3E%3C/filter%3E%3Crect width=&quot;100%25&quot; height=&quot;100%25&quot; filter=&quot;url(%23noise)&quot; opacity=&quot;0.03&quot;/%3E%3C/svg%3E')] opacity-20"></div>
     
-    <!-- Content wrapper with Apple glassmorphism -->
+    <!-- Content wrapper -->
     <div class="relative z-10 min-h-screen">
-      <!-- Header with Apple glassmorphism -->
+      <!-- Header -->
       <div class="sticky top-0 z-50 backdrop-blur-2xl bg-black/20 border-b border-white/10 shadow-2xl">
         <div class="mx-auto w-full max-w-7xl px-4 py-2 sm:px-6 sm:py-3 lg:px-8">
           <Header />
@@ -64,11 +64,11 @@ const { title, og } = Astro.props;
     
     <style is:global>
       html {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        font-family: 'Inter', system-ui, sans-serif;
         scroll-behavior: smooth;
       }
       
-      /* Apple-inspired gradient animation */
+      /* Gradient animation */
       @keyframes gradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
@@ -101,7 +101,7 @@ const { title, og } = Astro.props;
         text-rendering: optimizeLegibility;
       }
       
-      /* Apple-style scrollbar */
+      /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
       }

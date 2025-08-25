@@ -1,0 +1,198 @@
+---
+import removeTrailingSlash from "@/utils/removeTrailingSlash";
+
+const pathname = removeTrailingSlash(Astro.url.pathname);
+---
+
+<!-- Mobile menu button -->
+<button 
+  id="mobile-menu-button"
+  class="md:hidden p-3 rounded-2xl backdrop-blur-2xl bg-white/5 border border-white/10 text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-300 ease-out hover:shadow-lg focus:outline-none"
+  aria-label="Toggle mobile menu"
+  aria-expanded="false"
+  aria-controls="mobile-menu"
+  data-mobile-menu-toggle
+>
+  <svg class="w-6 h-6 transition-transform duration-300 block" data-menu-icon fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+  </svg>
+  <svg class="w-6 h-6 transition-transform duration-300 hidden" data-close-icon fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+  </svg>
+</button>
+
+<!-- Mobile Navigation Menu -->
+<nav 
+  id="mobile-menu"
+  class="md:hidden fixed inset-x-0 top-[72px] z-40 transform -translate-y-full opacity-0 transition-all duration-300 ease-out pointer-events-none"
+  role="navigation" 
+  aria-label="Mobile Navigation"
+  data-mobile-menu
+>
+  <div class="backdrop-blur-3xl bg-slate-900/95 border-b border-slate-700/50 shadow-2xl">
+    <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <ul role="list" class="space-y-4">
+        <li>
+          <a
+            href="/"
+            class:list={{
+              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg"]: pathname === "/",
+              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300"]: pathname !== "/",
+            }}
+            aria-current={pathname === "/" ? "page" : undefined}
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="/resume"
+            class:list={{
+              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg"]: pathname === "/resume",
+              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300"]: pathname !== "/resume",
+            }}
+            aria-current={pathname === "/resume" ? "page" : undefined}
+          >
+            Resume
+          </a>
+        </li>
+        <li>
+          <a
+            href="/posts"
+            class:list={{
+              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg"]: pathname === "/posts",
+              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300"]: pathname !== "/posts",
+            }}
+            aria-current={pathname === "/posts" ? "page" : undefined}
+          >
+            Posts
+          </a>
+        </li>
+        <li>
+          <a
+            href="/planned"
+            class:list={{
+              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg"]: pathname === "/planned",
+              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300"]: pathname !== "/planned",
+            }}
+            aria-current={pathname === "/planned" ? "page" : undefined}
+          >
+            Plans
+          </a>
+        </li>
+        <li>
+          <a
+            href="/til"
+            class:list={{
+              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg"]: pathname === "/til",
+              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300"]: pathname !== "/til",
+            }}
+            aria-current={pathname === "/til" ? "page" : undefined}
+          >
+            TIL
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<script>
+  // Simple and reliable mobile menu functionality
+  function initMobileMenu() {
+    const button = document.querySelector('[data-mobile-menu-toggle]');
+    const menu = document.querySelector('[data-mobile-menu]');
+    const menuIcon = document.querySelector('[data-menu-icon]');
+    const closeIcon = document.querySelector('[data-close-icon]');
+    
+    if (!button || !menu || !menuIcon || !closeIcon) {
+      console.warn('Mobile menu elements not found');
+      return;
+    }
+
+    // Type assertion after null check
+    const btn = button as HTMLButtonElement;
+    const nav = menu as HTMLElement;
+    const menuIcn = menuIcon as HTMLElement;
+    const closeIcn = closeIcon as HTMLElement;
+
+    let isOpen = false;
+
+    function openMenu() {
+      isOpen = true;
+      nav.classList.remove('-translate-y-full', 'opacity-0', 'pointer-events-none');
+      nav.classList.add('translate-y-0', 'opacity-100', 'pointer-events-auto');
+      menuIcn.classList.add('hidden');
+      closeIcn.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      isOpen = false;
+      nav.classList.add('-translate-y-full', 'opacity-0', 'pointer-events-none');
+      nav.classList.remove('translate-y-0', 'opacity-100', 'pointer-events-auto');
+      menuIcn.classList.remove('hidden');
+      closeIcn.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    function toggleMenu() {
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    }
+
+    // Bind events
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Mobile menu button clicked');
+      toggleMenu();
+    });
+
+    // Close when clicking links
+    const navLinks = nav.querySelectorAll('a[href]');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenu();
+      });
+    });
+
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        closeMenu();
+      }
+    });
+
+    // Close when clicking outside
+    document.addEventListener('click', (e) => {
+      const target = e.target as Node;
+      if (isOpen && !nav.contains(target) && !btn.contains(target)) {
+        closeMenu();
+      }
+    });
+
+    // Make functions globally accessible for debugging
+    (window as any).mobileMenu = {
+      open: openMenu,
+      close: closeMenu,
+      toggle: toggleMenu,
+      isOpen: () => isOpen
+    };
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileMenu);
+  } else {
+    initMobileMenu();
+  }
+
+  // Re-initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initMobileMenu);
+</script>
