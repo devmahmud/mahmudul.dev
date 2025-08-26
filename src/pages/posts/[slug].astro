@@ -44,10 +44,15 @@ const {
   headings,
 } = await render();
 
+const ogImageUrl = cover
+  ? new URL(cover.src, Astro.url.origin).href
+  : new URL(getOgImagePath(Astro.url.pathname), Astro.url.origin).href;
+
 const og = {
   title: title,
   description: description,
-  image: new URL(getOgImagePath(Astro.url.pathname), Astro.url.origin).href,
+  image: ogImageUrl,
+  alt: coverAlt || title,
 };
 ---
 
