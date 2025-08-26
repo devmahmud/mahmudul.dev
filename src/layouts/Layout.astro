@@ -17,14 +17,21 @@ export interface Props {
     image?: string;
     alt?: string;
   };
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    section?: string;
+    tags?: string[];
+  };
 }
 
-const { title, og } = Astro.props;
+const { title, og, article } = Astro.props;
 ---
 
 <!DOCTYPE html>
 <html lang="en">
-  <SEOTags title={title} og={og} />
+  <SEOTags title={title} og={og} article={article} />
 
   <body class="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 antialiased overflow-x-hidden">
     <!-- Gradient background -->

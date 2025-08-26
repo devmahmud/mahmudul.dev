@@ -56,7 +56,16 @@ const og = {
 };
 ---
 
-<Layout title={title} og={og}>
+<Layout
+  title={title}
+  og={{ ...og, type: "article" }}
+  article={{
+    publishedTime: new Date(publishedAt).toISOString(),
+    modifiedTime: (Astro.props.data.updatedAt && new Date(Astro.props.data.updatedAt).toISOString()) || undefined,
+    author: "Mahmudul Alam",
+    tags: [],
+  }}
+>
   <div class="flex gap-8 items-start">
     <main class="post min-w-prose flex-1 mx-auto flex w-full flex-col gap-4 max-w-4xl">
       <header role="presentation">
