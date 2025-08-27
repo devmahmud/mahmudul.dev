@@ -71,6 +71,85 @@ body {
   background: var(--c-scrollbar-hover);
 }
 
+/* TOC specific scrollbar styling */
+.toc-scrollbar::-webkit-scrollbar {
+  width: 2px !important;
+}
+
+.toc-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: 2px !important;
+}
+
+.toc-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 2px !important;
+  transition: background 0.2s ease;
+}
+
+.toc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Additional specificity for TOC */
+aside ul.toc-scrollbar::-webkit-scrollbar {
+  width: 2px !important;
+}
+
+aside ul.toc-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+aside ul.toc-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-radius: 2px !important;
+}
+
+/* Force override for TOC scrollbar */
+aside .toc-scrollbar::-webkit-scrollbar {
+  width: 2px !important;
+  height: 2px !important;
+}
+
+aside .toc-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+  border: none !important;
+}
+
+aside .toc-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-radius: 1px !important;
+  min-height: 20px !important;
+}
+
+aside .toc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Firefox scrollbar for TOC */
+aside .toc-scrollbar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.06) transparent !important;
+}
+
+/* Ultra-thin custom TOC scrollbar */
+.custom-toc-scrollbar::-webkit-scrollbar {
+  width: 1px !important;
+}
+
+.custom-toc-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.custom-toc-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border-radius: 0 !important;
+}
+
+.custom-toc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
 body {
   @apply bg-slate-950 text-white;
   -webkit-font-smoothing: antialiased;
