@@ -3,7 +3,9 @@ import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import PostsLists from "@/components/post/PostsList.astro";
 
-const posts = (await getCollection("posts")).filter((post) => !post.data.planned);
+const posts = (await getCollection("posts"))
+  .filter((post) => !post.data.planned)
+  .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime());
 ---
 
 <Layout title="All Posts">

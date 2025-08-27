@@ -13,8 +13,13 @@ import projects from '@/data/projects';
 
 const allPosts = await getCollection('posts');
 
-const posts = allPosts.filter((post) => !post.data.planned);
-const plannedPosts = allPosts.filter((post) => post.data.planned);
+const posts = allPosts
+  .filter((post) => !post.data.planned)
+  .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime());
+
+const plannedPosts = allPosts
+  .filter((post) => post.data.planned)
+  .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime());
 ---
 
 <Layout title="Mahmudul Alam">

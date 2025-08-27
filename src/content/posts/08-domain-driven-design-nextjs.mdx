@@ -1,0 +1,1598 @@
+---
+title: "Domain-Driven Design in Next.js"
+publishedAt: 2025-08-27
+description: "Learn how to implement Domain-Driven Design in a Next.js application using TypeScript."
+slug: "domain-driven-design-nextjs"
+cover: "src/assets/posts/08/cover.jpg"
+coverAlt: "The logo of Domain-Driven Design in Next.js"
+ogImage: "/og-posts/08/cover.jpg"
+---
+
+# Domain-Driven Design in Next.js: A Complete Guide
+
+## Introduction
+
+Domain-Driven Design (DDD) is a software development approach that focuses on creating a rich model of the business domain. When combined with Next.js, it provides a robust architecture for building scalable web applications. This guide demonstrates how to implement DDD principles in a Next.js application using TypeScript.
+
+### Why DDD with Next.js?
+
+- **Separation of Concerns**: Clear boundaries between business logic and UI
+- **Testability**: Business logic independent of framework
+- **Maintainability**: Easy to modify and extend
+- **Scalability**: Supports large, complex applications
+- **Type Safety**: Full TypeScript support throughout all layers
+
+## Project Architecture Overview
+
+```
+ecommerce-app/
+├── apps/web/                 # Next.js Application Layer
+│   └── src/
+│       ├── app/              # Next.js App Router pages
+│       ├── components/       # UI components
+│       ├── products/         # Feature-specific modules
+│       │   ├── actions/      # Server actions
+│       │   ├── components/   # Feature components
+│       │   └── forms/        # Form schemas and components
+│       ├── orders/           # Order management features
+│       ├── users/            # User management features
+│       └── lib/              # App-specific utilities
+│
+├── packages/
+│   ├── domain/               # Domain Layer (Pure Business Logic)
+│   │   ├── entities/         # Domain entities and value objects
+│   │   ├── repositories/     # Repository interfaces
+│   │   └── use-cases/        # Business use cases
+│   │
+│   ├── infrastructure/       # Infrastructure Layer
+│   │   ├── database/         # Database implementations
+│   │   ├── external-api/     # Third-party API integrations
+│   │   ├── logging/          # Logging services
+│   │   └── cache/            # Caching services
+│   │
+│   └── ui/                   # Shared UI components
+```
+
+### Key Architectural Principles
+
+1. **Dependency Inversion**: High-level modules don't depend on low-level modules
+2. **Clean Architecture**: Dependencies point inward toward the domain
+3. **Repository Pattern**: Abstraction over data access
+4. **Use Case Pattern**: Encapsulation of business operations
+5. **Result Pattern**: Functional error handling
+
+## Domain Layer
+
+The domain layer contains the core business logic and is completely independent of any external frameworks or libraries.
+
+### Domain Objects
+
+Domain objects represent the core business entities and concepts:
+
+```typescript
+// packages/domain/entities/Product.ts
+export type Product = {
+  id: string;
+  name: string;
+  description: string;
+  price: Money;
+  category: ProductCategory;
+  inventory: number;
+  images: Image[];
+  status: ProductStatus;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type ProductStatus = "ACTIVE" | "INACTIVE" | "OUT_OF_STOCK";
+
+export type ProductCategory = {
+  id: string;
+  name: string;
+  slug: string;
+};
+
+export type ProductCreateInput = {
+  name: string;
+  description: string;
+  price: Money;
+  categoryId: string;
+  inventory: number;
+  imageUrls: string[];
+};
+
+export type ProductError = BaseError<
+  | "PRODUCT_NOT_FOUND_ERROR"
+  | "PRODUCT_CREATE_ERROR"
+  | "PRODUCT_UPDATE_ERROR"
+  | "PRODUCT_INSUFFICIENT_INVENTORY_ERROR"
+  | "PRODUCT_INVALID_PRICE_ERROR"
+>;
+```
+
+### Repository Interfaces
+
+Repositories define contracts for data access without implementation details:
+
+```typescript
+// packages/domain/repositories/ProductRepository.ts
+export type ProductRepository<TErr = ProductError | NetworkError> = {
+  create: (input: {
+    userId: string;
+    productData: ProductCreateInput;
+  }) => AsyncResult<Pick<Product, "id">, TErr>;
+  
+  getById: (input: {
+    id: string;
+  }) => AsyncResult<Product, TErr>;
+  
+  getAll: (input: {
+    categoryId?: string;
+    status?: ProductStatus;
+    skip?: number;
+    take?: number;
+  }) => AsyncResult<{
+    data: Product[];
+    pageInfo: PageInfo;
+    total: number;
+  }, TErr>;
+  
+  update: (input: {
+    id: string;
+    productData: Partial<ProductCreateInput>;
+  }) => AsyncResult<Product, TErr>;
+  
+  updateInventory: (input: {
+    id: string;
+    quantity: number;
+  }) => AsyncResult<{ success: true }, TErr>;
+  
+  delete: (input: {
+    id: string;
+  }) => AsyncResult<{ success: true }, TErr>;
+};
+```
+
+### Error Handling with Result Pattern
+
+The domain uses a Result pattern for functional error handling:
+
+```typescript
+// packages/domain/objects/Result.ts
+export type Ok<T> = { data: T; ok: true };
+export type Err<E> = { error: E; ok: false };
+
+export const err = <E>(error: E): Err<E> => ({ ok: false, error });
+export const ok = <T>(data: T): Ok<T> => ({ ok: true, data });
+
+export type Result<T, E> = Ok<T> | Err<E>;
+export type AsyncResult<T, E> = Promise<Ok<T> | Err<E>>;
+
+// Base error structure
+export type BaseError<T> = {
+  code: T;
+  field?: string | null;
+  message: string;
+};
+```
+
+## Use Cases (Application Layer)
+
+Use cases encapsulate business operations and coordinate between domain objects and repositories.
+
+### Use Case Structure
+
+```typescript
+// packages/domain/use-cases/product/CreateProduct.ts
+export const createProductUseCase = async (
+  deps: { 
+    productRepository: ProductRepository;
+    categoryRepository: CategoryRepository;
+  },
+  input: { 
+    userId: string; 
+    productData: ProductCreateInput;
+  },
+): AsyncResult<Pick<Product, "id">, ProductError | CategoryError | NetworkError> => {
+  // 1. Validate category exists
+  const categoryResult = await deps.categoryRepository.getById({
+    id: input.productData.categoryId,
+  });
+
+  if (!categoryResult.ok) {
+    return err(categoryResult.error);
+  }
+
+  // 2. Validate price is positive
+  if (input.productData.price.amount <= 0) {
+    return err({
+      code: "PRODUCT_INVALID_PRICE_ERROR",
+      message: "Product price must be greater than 0",
+    });
+  }
+
+  // 3. Create the product
+  const productResult = await deps.productRepository.create({
+    userId: input.userId,
+    productData: input.productData,
+  });
+
+  if (!productResult.ok) {
+    return err(productResult.error);
+  }
+
+  return ok(productResult.data);
+};
+```
+
+### Complex Use Case Example
+
+```typescript
+// packages/domain/use-cases/order/CreateOrder.ts
+export const createOrderUseCase = async (
+  deps: { 
+    orderRepository: OrderRepository;
+    productRepository: ProductRepository;
+    userRepository: UserRepository;
+    paymentService: PaymentService;
+  },
+  input: {
+    userId: string;
+    items: OrderItemInput[];
+    shippingAddress: Address;
+    paymentMethodId: string;
+  },
+): AsyncResult<Pick<Order, "id">, OrderError | ProductError | PaymentError | NetworkError> => {
+  // Step 1: Validate user exists
+  const userResult = await deps.userRepository.getById({
+    id: input.userId,
+  });
+
+  if (!userResult.ok) {
+    return err(userResult.error);
+  }
+
+  // Step 2: Validate all products and check inventory
+  const productValidations = await Promise.all(
+    input.items.map(async (item) => {
+      const productResult = await deps.productRepository.getById({
+        id: item.productId,
+      });
+
+      if (!productResult.ok) {
+        return productResult;
+      }
+
+      if (productResult.data.inventory < item.quantity) {
+        return err({
+          code: "PRODUCT_INSUFFICIENT_INVENTORY_ERROR",
+          message: `Insufficient inventory for product ${item.productId}`,
+        });
+      }
+
+      return ok(productResult.data);
+    }),
+  );
+
+  // Check if any product validation failed
+  const failedValidation = productValidations.find((result) => !result.ok);
+  if (failedValidation && !failedValidation.ok) {
+    return err(failedValidation.error);
+  }
+
+  // Step 3: Calculate total amount
+  const products = productValidations.map((result) => result.data!);
+  const totalAmount = input.items.reduce((sum, item, index) => {
+    return sum + (products[index].price.amount * item.quantity);
+  }, 0);
+
+  // Step 4: Process payment
+  const paymentResult = await deps.paymentService.processPayment({
+    amount: { amount: totalAmount, currency: "USD" },
+    paymentMethodId: input.paymentMethodId,
+    customerId: input.userId,
+  });
+
+  if (!paymentResult.ok) {
+    return err(paymentResult.error);
+  }
+
+  // Step 5: Create the order
+  const orderResult = await deps.orderRepository.create({
+    userId: input.userId,
+    items: input.items,
+    shippingAddress: input.shippingAddress,
+    totalAmount: { amount: totalAmount, currency: "USD" },
+    paymentId: paymentResult.data.paymentId,
+  });
+
+  if (!orderResult.ok) {
+    // Refund payment if order creation fails
+    await deps.paymentService.refundPayment({
+      paymentId: paymentResult.data.paymentId,
+    });
+    return err(orderResult.error);
+  }
+
+  // Step 6: Update product inventory
+  await Promise.all(
+    input.items.map((item) =>
+      deps.productRepository.updateInventory({
+        id: item.productId,
+        quantity: -item.quantity, // Decrease inventory
+      }),
+    ),
+  );
+
+  return ok(orderResult.data);
+};
+```
+
+### Use Case Benefits
+
+- **Single Responsibility**: Each use case handles one business operation
+- **Testability**: Easy to unit test business logic
+- **Dependency Injection**: Dependencies injected at runtime
+- **Error Handling**: Consistent error propagation
+- **Composability**: Use cases can call other use cases
+
+## Infrastructure Layer
+
+The infrastructure layer provides concrete implementations of repository interfaces and external service integrations.
+
+### Database Repository Implementation
+
+```typescript
+// packages/infrastructure/database/ProductRepository.ts
+export const databaseProductRepository = ({
+  db,
+  logger,
+}: {
+  db: Database;
+  logger: Logger;
+}): ProductRepository => ({
+  create: async ({ userId, productData }) => {
+    try {
+      const productId = generateId();
+      
+      await db.transaction(async (tx) => {
+        // Insert product
+        await tx.products.insert({
+          id: productId,
+          name: productData.name,
+          description: productData.description,
+          price: productData.price.amount,
+          currency: productData.price.currency,
+          categoryId: productData.categoryId,
+          inventory: productData.inventory,
+          status: "ACTIVE",
+          createdBy: userId,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+
+        // Insert product images
+        await Promise.all(
+          productData.imageUrls.map((url, index) =>
+            tx.productImages.insert({
+              id: generateId(),
+              productId,
+              url,
+              order: index,
+            }),
+          ),
+        );
+      });
+
+      return ok({ id: productId });
+    } catch (error) {
+      logger.error("Failed to create product", { error, productData });
+
+      return err({
+        code: "PRODUCT_CREATE_ERROR",
+        message: "Failed to create product",
+      });
+    }
+  },
+
+  getById: async ({ id }) => {
+    try {
+      const productRow = await db.products
+        .select("*")
+        .where("id", id)
+        .where("status", "!=", "DELETED")
+        .first();
+
+      if (!productRow) {
+        return err({
+          code: "PRODUCT_NOT_FOUND_ERROR",
+          message: `Product ${id} not found`,
+        });
+      }
+
+      const images = await db.productImages
+        .select("*")
+        .where("productId", id)
+        .orderBy("order");
+
+      const category = await db.categories
+        .select("*")
+        .where("id", productRow.categoryId)
+        .first();
+
+      const product: Product = {
+        id: productRow.id,
+        name: productRow.name,
+        description: productRow.description,
+        price: {
+          amount: productRow.price,
+          currency: productRow.currency,
+        },
+        category: {
+          id: category.id,
+          name: category.name,
+          slug: category.slug,
+        },
+        inventory: productRow.inventory,
+        images: images.map((img) => ({
+          url: img.url,
+          alt: productRow.name,
+        })),
+        status: productRow.status,
+        createdAt: productRow.createdAt,
+        updatedAt: productRow.updatedAt,
+      };
+
+      return ok(product);
+    } catch (error) {
+      logger.error("Failed to get product", { error, id });
+
+      return err({
+        code: "PRODUCT_NOT_FOUND_ERROR",
+        message: "Failed to retrieve product",
+      });
+    }
+  },
+
+  updateInventory: async ({ id, quantity }) => {
+    try {
+      const updated = await db.products
+        .where("id", id)
+        .increment("inventory", quantity);
+
+      if (updated === 0) {
+        return err({
+          code: "PRODUCT_NOT_FOUND_ERROR",
+          message: `Product ${id} not found`,
+        });
+      }
+
+      return ok({ success: true });
+    } catch (error) {
+      logger.error("Failed to update inventory", { error, id, quantity });
+
+      return err({
+        code: "PRODUCT_UPDATE_ERROR",
+        message: "Failed to update product inventory",
+      });
+    }
+  },
+
+  // ... other methods
+});
+```
+
+### HTTP Client
+
+```typescript
+// packages/infrastructure/external-api/http-client.ts
+export const httpClient = (
+  baseUrl: string,
+  apiKey?: string,
+) => ({
+  get: async <TResult = any>(
+    endpoint: string,
+    options?: {
+      params?: Record<string, string>;
+      headers?: Record<string, string>;
+    },
+  ): Promise<Result<TResult, NetworkError>> => {
+    try {
+      const url = new URL(endpoint, baseUrl);
+      
+      if (options?.params) {
+        Object.entries(options.params).forEach(([key, value]) => {
+          url.searchParams.append(key, value);
+        });
+      }
+
+      const response = await fetch(url.toString(), {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          ...(apiKey && { Authorization: `Bearer ${apiKey}` }),
+          ...options?.headers,
+        },
+      });
+
+      if (!response.ok) {
+        return err({
+          status: response.status,
+          code: response.status === 404 ? "NOT_FOUND_ERROR" : "UNEXPECTED_HTTP_ERROR",
+          message: response.statusText,
+        });
+      }
+
+      const data = await response.json();
+      return ok(data);
+    } catch (error) {
+      return err({
+        code: "UNEXPECTED_HTTP_ERROR",
+        message: "Network request failed",
+        status: 500,
+      });
+    }
+  },
+
+  post: async <TResult = any, TBody = any>(
+    endpoint: string,
+    body: TBody,
+    options?: {
+      headers?: Record<string, string>;
+    },
+  ): Promise<Result<TResult, NetworkError>> => {
+    try {
+      const response = await fetch(`${baseUrl}${endpoint}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(apiKey && { Authorization: `Bearer ${apiKey}` }),
+          ...options?.headers,
+        },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        return err({
+          status: response.status,
+          code: "UNEXPECTED_HTTP_ERROR",
+          message: response.statusText,
+        });
+      }
+
+      const data = await response.json();
+      return ok(data);
+    } catch (error) {
+      return err({
+        code: "UNEXPECTED_HTTP_ERROR",
+        message: "Network request failed",
+        status: 500,
+      });
+    }
+  },
+});
+```
+
+## Next.js Application Layer
+
+The Next.js application layer handles HTTP requests, routing, and UI rendering while delegating business logic to use cases.
+
+### Server Actions
+
+Server actions bridge the UI layer with business logic:
+
+```typescript
+// apps/web/src/products/actions/create-product-action.ts
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
+
+export const createProductAction = async (
+  productData: CreateProductFormValues,
+) => {
+  const { userId } = await requireAuth();
+
+  const productResult = await createProductUseCase(
+    {
+      productRepository: databaseProductRepository({
+        db: getDatabase(),
+        logger: getLogger(),
+      }),
+      categoryRepository: databaseCategoryRepository({
+        db: getDatabase(),
+        logger: getLogger(),
+      }),
+    },
+    {
+      userId,
+      productData: {
+        name: productData.name,
+        description: productData.description,
+        price: {
+          amount: productData.price,
+          currency: "USD",
+        },
+        categoryId: productData.categoryId,
+        inventory: productData.inventory,
+        imageUrls: productData.imageUrls,
+      },
+    },
+  );
+
+  if (!productResult.ok) {
+    return { error: productResult.error };
+  }
+
+  // Revalidate product listings
+  revalidateTag("products:all");
+  revalidateTag(`category:${productData.categoryId}`);
+
+  redirect(`/products/${productResult.data.id}`);
+};
+```
+
+### Page Components
+
+Page components use use cases to fetch data:
+
+```typescript
+// apps/web/src/app/products/[productId]/page.tsx
+export default async function ProductPage({
+  params: { productId },
+}: {
+  params: { productId: string };
+}) {
+  const productResult = await getProductByIdUseCase(
+    {
+      productRepository: databaseProductRepository({
+        db: getDatabase(),
+        logger: getLogger(),
+      }),
+    },
+    { id: productId },
+  );
+
+  if (!productResult.ok) {
+    if (productResult.error.code === "PRODUCT_NOT_FOUND_ERROR") {
+      notFound();
+    }
+    
+    redirect(`/error?code=${productResult.error.code}`);
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <ProductDetails product={productResult.data} />
+      <AddToCartButton productId={productResult.data.id} />
+    </div>
+  );
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({
+  params: { productId },
+}: {
+  params: { productId: string };
+}): Promise<Metadata> {
+  const productResult = await getProductByIdUseCase(
+    {
+      productRepository: databaseProductRepository({
+        db: getDatabase(),
+        logger: getLogger(),
+      }),
+    },
+    { id: productId },
+  );
+
+  if (!productResult.ok) {
+    return {
+      title: "Product Not Found",
+    };
+  }
+
+  return {
+    title: productResult.data.name,
+    description: productResult.data.description,
+    openGraph: {
+      title: productResult.data.name,
+      description: productResult.data.description,
+      images: productResult.data.images.map((img) => img.url),
+    },
+  };
+}
+```
+
+### Helper Functions
+
+Helper functions encapsulate common patterns:
+
+```typescript
+// apps/web/src/lib/product-helpers.ts
+export const getProductOr404 = async (productId: string): Promise<Product> => {
+  const result = await getProductByIdUseCase(
+    {
+      productRepository: databaseProductRepository({
+        db: getDatabase(),
+        logger: getLogger(),
+      }),
+    },
+    { id: productId },
+  );
+
+  if (!result.ok) {
+    notFound();
+  }
+
+  return result.data;
+};
+
+export const requireProductInStock = async (
+  productId: string,
+  quantity: number,
+): Promise<Product> => {
+  const product = await getProductOr404(productId);
+
+  if (product.status !== "ACTIVE") {
+    throw new Error("Product is not available");
+  }
+
+  if (product.inventory < quantity) {
+    throw new Error("Insufficient inventory");
+  }
+
+  return product;
+};
+
+export const calculateOrderTotal = (items: CartItem[]): Money => {
+  const total = items.reduce((sum, item) => {
+    return sum + (item.product.price.amount * item.quantity);
+  }, 0);
+
+  return {
+    amount: total,
+    currency: "USD",
+  };
+};
+```
+
+## Error Handling Strategy
+
+### Domain Error Types
+
+```typescript
+// Domain-specific errors
+export type ProductError = BaseError<
+  | "PRODUCT_NOT_FOUND_ERROR"
+  | "PRODUCT_CREATE_ERROR"
+  | "PRODUCT_UPDATE_ERROR"
+  | "PRODUCT_INSUFFICIENT_INVENTORY_ERROR"
+  | "PRODUCT_INVALID_PRICE_ERROR"
+>;
+
+export type OrderError = BaseError<
+  | "ORDER_NOT_FOUND_ERROR"
+  | "ORDER_CREATE_ERROR"
+  | "ORDER_INVALID_ITEMS_ERROR"
+  | "ORDER_PAYMENT_FAILED_ERROR"
+>;
+
+export type UserError = BaseError<
+  | "USER_NOT_FOUND_ERROR"
+  | "USER_UNAUTHORIZED_ERROR"
+  | "USER_INVALID_CREDENTIALS_ERROR"
+>;
+
+// Network errors
+export type NetworkError = BaseError<NetworkErrorCode> & { status: number };
+export type NetworkErrorCode = 
+  | "BAD_REQUEST_ERROR"
+  | "NOT_FOUND_ERROR"
+  | "UNAUTHORIZED_ERROR"
+  | "UNEXPECTED_HTTP_ERROR";
+```
+
+### Error Propagation
+
+```typescript
+// Use case level
+if (!productResult.ok) {
+  return err(productResult.error);
+}
+
+// Application level
+if (!productResult.ok) {
+  if (productResult.error.code === "PRODUCT_NOT_FOUND_ERROR") {
+    notFound();
+  }
+  
+  redirect(`/error?code=${productResult.error.code}`);
+}
+
+// Server action level
+if (!orderResult.ok) {
+  return {
+    error: {
+      code: orderResult.error.code,
+      message: orderResult.error.message,
+      field: orderResult.error.field,
+    },
+  };
+}
+```
+
+### Global Error Handling
+
+```typescript
+// apps/web/src/app/global-error.tsx
+"use client";
+
+import { useEffect } from "react";
+import { getLogger } from "@/lib/logger";
+
+const logger = getLogger();
+
+export default function GlobalError({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  useEffect(() => {
+    logger.error("Unhandled application error", { 
+      error: error.message,
+      stack: error.stack,
+      digest: error.digest,
+    });
+  }, [error]);
+
+  return (
+    <html>
+      <body>
+        <div className="flex min-h-screen flex-col items-center justify-center">
+          <h1 className="text-2xl font-bold text-red-600">
+            Something went wrong!
+          </h1>
+          <p className="mt-2 text-gray-600">
+            An unexpected error occurred. Our team has been notified.
+          </p>
+          <button
+            onClick={reset}
+            className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+          >
+            Try again
+          </button>
+        </div>
+      </body>
+    </html>
+  );
+}
+```
+
+## Dependency Injection
+
+### Runtime Dependency Injection
+
+Dependencies are injected at runtime, making the system flexible and testable:
+
+```typescript
+// Use case call with injected dependencies
+const result = await createProductUseCase(
+  {
+    productRepository: databaseProductRepository({
+      db: getDatabase(),
+      logger: getLogger(),
+    }),
+    categoryRepository: databaseCategoryRepository({
+      db: getDatabase(),
+      logger: getLogger(),
+    }),
+  },
+  {
+    userId,
+    productData,
+  },
+);
+```
+
+### Repository Factory Pattern
+
+```typescript
+// Factory for creating repositories with configuration
+const createRepositories = (config: {
+  db: Database;
+  logger: Logger;
+  cache?: CacheService;
+}) => ({
+  productRepository: databaseProductRepository(config),
+  orderRepository: databaseOrderRepository(config),
+  userRepository: databaseUserRepository(config),
+  categoryRepository: databaseCategoryRepository(config),
+});
+
+// Environment-specific factory
+const createProductionRepositories = () => 
+  createRepositories({
+    db: getProductionDatabase(),
+    logger: getProductionLogger(),
+    cache: getRedisCache(),
+  });
+
+const createTestRepositories = () => 
+  createRepositories({
+    db: getTestDatabase(),
+    logger: getTestLogger(),
+    cache: getInMemoryCache(),
+  });
+```
+
+## Best Practices
+
+### 1. Keep Domain Pure
+
+```typescript
+// ✅ Good - Pure domain logic
+export type Product = {
+  id: string;
+  name: string;
+  price: Money;
+  status: ProductStatus;
+};
+
+// ❌ Bad - Framework dependency in domain
+import { NextRequest } from 'next/server';
+export type Product = {
+  id: string;
+  name: string;
+  request: NextRequest; // Framework dependency
+};
+```
+
+### 2. Use Meaningful Error Codes
+
+```typescript
+// ✅ Good - Descriptive error codes
+export type ProductError = BaseError<
+  | "PRODUCT_NOT_FOUND_ERROR"
+  | "PRODUCT_INSUFFICIENT_INVENTORY_ERROR"
+  | "PRODUCT_INVALID_PRICE_ERROR"
+>;
+
+// ❌ Bad - Generic error codes
+export type ProductError = BaseError<
+  | "ERROR_1"
+  | "ERROR_2"
+>;
+```
+
+### 3. Implement Repository Pattern Correctly
+
+```typescript
+// ✅ Good - Interface in domain, implementation in infrastructure
+// Domain layer
+export interface UserRepository {
+  findById(id: string): Promise<Result<User, UserError>>;
+}
+
+// Infrastructure layer
+export class GraphQLUserRepository implements UserRepository {
+  async findById(id: string): Promise<Result<User, UserError>> {
+    // Implementation details
+  }
+}
+```
+
+### 4. Use Type-Safe Result Pattern
+
+```typescript
+// ✅ Good - Type-safe error handling
+const result = await createProductUseCase(deps, input);
+if (!result.ok) {
+  // TypeScript knows result.error is ProductError | CategoryError | NetworkError
+  console.error(result.error.code);
+  return;
+}
+// TypeScript knows result.data is Pick<Product, "id">
+console.log(result.data.id);
+```
+
+### 5. Organize by Feature
+
+```
+apps/web/src/
+├── products/
+│   ├── actions/
+│   ├── components/
+│   └── forms/
+├── orders/
+│   ├── actions/
+│   ├── components/
+│   └── forms/
+├── users/
+│   ├── actions/
+│   ├── components/
+│   └── forms/
+└── categories/
+    ├── actions/
+    ├── components/
+    └── forms/
+```
+
+## Common Patterns
+
+### 1. CQRS (Command Query Responsibility Segregation)
+
+```typescript
+// Command (Write operation)
+export const createProductUseCase = async (
+  deps: { 
+    productRepository: ProductRepository;
+    categoryRepository: CategoryRepository;
+  },
+  input: CreateProductInput,
+): AsyncResult<{ id: string }, ProductError | CategoryError> => {
+  // Write logic with validation and business rules
+};
+
+// Query (Read operation)
+export const getProductByIdUseCase = async (
+  deps: { productRepository: ProductRepository },
+  input: { id: string },
+): AsyncResult<Product, ProductError> => {
+  // Read logic optimized for retrieval
+};
+
+// Complex query operation
+export const searchProductsUseCase = async (
+  deps: { productRepository: ProductRepository },
+  input: { 
+    query: string;
+    categoryId?: string;
+    priceRange?: { min: number; max: number };
+    skip?: number;
+    take?: number;
+  },
+): AsyncResult<{ products: Product[]; total: number }, ProductError> => {
+  // Search logic
+};
+```
+
+### 2. Factory Pattern for Repositories
+
+```typescript
+export const createInfrastructure = (config: InfrastructureConfig) => ({
+  productRepository: databaseProductRepository(config),
+  orderRepository: databaseOrderRepository(config),
+  userRepository: databaseUserRepository(config),
+  paymentService: stripePaymentService(config),
+  emailService: resendEmailService(config),
+  // ... other services
+});
+```
+
+### 3. Strategy Pattern for Different Implementations
+
+```typescript
+// Different repository implementations
+export const mockProductRepository = (): ProductRepository => ({
+  create: async () => ok({ id: "mock-id" }),
+  getById: async () => ok(mockProduct),
+  getAll: async () => ok({ data: [mockProduct], pageInfo: mockPageInfo, total: 1 }),
+  update: async () => ok(mockProduct),
+  updateInventory: async () => ok({ success: true }),
+  delete: async () => ok({ success: true }),
+});
+
+export const databaseProductRepository = (config: DatabaseConfig): ProductRepository => ({
+  // Database implementation using SQL
+});
+
+export const cacheProductRepository = (
+  baseRepository: ProductRepository,
+  cache: CacheService
+): ProductRepository => ({
+  // Cached wrapper implementation
+});
+```
+
+## Testing Strategy
+
+### Unit Testing Use Cases
+
+```typescript
+describe('createProductUseCase', () => {
+  it('should create product successfully', async () => {
+    // Arrange
+    const mockProductRepository: ProductRepository = {
+      create: jest.fn().mockResolvedValue(ok({ id: 'product-123' })),
+      getById: jest.fn(),
+      getAll: jest.fn(),
+      update: jest.fn(),
+      updateInventory: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const mockCategoryRepository: CategoryRepository = {
+      getById: jest.fn().mockResolvedValue(ok({ 
+        id: 'cat-1', 
+        name: 'Electronics',
+        slug: 'electronics',
+      })),
+      // ... other methods
+    };
+    
+    const input = {
+      userId: 'user-123',
+      productData: {
+        name: 'Test Product',
+        description: 'A test product',
+        price: { amount: 9999, currency: 'USD' },
+        categoryId: 'cat-1',
+        inventory: 10,
+        imageUrls: ['http://example.com/image.jpg'],
+      },
+    };
+
+    // Act
+    const result = await createProductUseCase(
+      { 
+        productRepository: mockProductRepository,
+        categoryRepository: mockCategoryRepository,
+      },
+      input,
+    );
+
+    // Assert
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.id).toBe('product-123');
+    }
+    expect(mockCategoryRepository.getById).toHaveBeenCalledWith({
+      id: 'cat-1',
+    });
+    expect(mockProductRepository.create).toHaveBeenCalledWith({
+      userId: 'user-123',
+      productData: input.productData,
+    });
+  });
+
+  it('should handle invalid price', async () => {
+    // Arrange
+    const mockRepositories = createMockRepositories();
+    
+    const input = {
+      userId: 'user-123',
+      productData: {
+        name: 'Test Product',
+        price: { amount: -100, currency: 'USD' }, // Invalid price
+        categoryId: 'cat-1',
+        inventory: 10,
+        imageUrls: [],
+      },
+    };
+
+    // Act
+    const result = await createProductUseCase(mockRepositories, input);
+
+    // Assert
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.code).toBe('PRODUCT_INVALID_PRICE_ERROR');
+    }
+  });
+
+  it('should handle category not found', async () => {
+    // Arrange
+    const mockRepositories = {
+      ...createMockRepositories(),
+      categoryRepository: {
+        getById: jest.fn().mockResolvedValue(err({
+          code: 'CATEGORY_NOT_FOUND_ERROR',
+          message: 'Category not found',
+        })),
+      },
+    };
+
+    // Act
+    const result = await createProductUseCase(mockRepositories, validInput);
+
+    // Assert
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.code).toBe('CATEGORY_NOT_FOUND_ERROR');
+    }
+  });
+});
+```
+
+### Integration Testing
+
+```typescript
+describe('Product Integration', () => {
+  beforeEach(async () => {
+    await setupTestDatabase();
+  });
+
+  afterEach(async () => {
+    await cleanupTestDatabase();
+  });
+
+  it('should create and retrieve product', async () => {
+    // Use real repository implementations with test database
+    const repositories = createTestInfrastructure();
+    
+    // Create a category first
+    const categoryResult = await createCategoryUseCase(
+      repositories,
+      {
+        userId: 'user-123',
+        categoryData: { name: 'Electronics', slug: 'electronics' },
+      },
+    );
+    
+    expect(categoryResult.ok).toBe(true);
+    
+    if (categoryResult.ok) {
+      // Create a product
+      const createResult = await createProductUseCase(
+        repositories,
+        {
+          userId: 'user-123',
+          productData: {
+            name: 'Test Product',
+            description: 'A test product',
+            price: { amount: 9999, currency: 'USD' },
+            categoryId: categoryResult.data.id,
+            inventory: 10,
+            imageUrls: ['http://example.com/image.jpg'],
+          },
+        },
+      );
+      
+      expect(createResult.ok).toBe(true);
+      
+      if (createResult.ok) {
+        // Retrieve the product
+        const getResult = await getProductByIdUseCase(
+          repositories,
+          { id: createResult.data.id },
+        );
+        
+        expect(getResult.ok).toBe(true);
+        if (getResult.ok) {
+          expect(getResult.data.name).toBe('Test Product');
+          expect(getResult.data.category.name).toBe('Electronics');
+        }
+      }
+    }
+  });
+
+  it('should handle complete order flow', async () => {
+    const repositories = createTestInfrastructure();
+    
+    // Setup test data
+    const { product, user } = await setupTestData(repositories);
+    
+    // Create order
+    const orderResult = await createOrderUseCase(
+      repositories,
+      {
+        userId: user.id,
+        items: [{ productId: product.id, quantity: 2 }],
+        shippingAddress: mockAddress,
+        paymentMethodId: 'pm_test_123',
+      },
+    );
+    
+    expect(orderResult.ok).toBe(true);
+    
+    if (orderResult.ok) {
+      // Verify inventory was updated
+      const updatedProductResult = await getProductByIdUseCase(
+        repositories,
+        { id: product.id },
+      );
+      
+      expect(updatedProductResult.ok).toBe(true);
+      if (updatedProductResult.ok) {
+        expect(updatedProductResult.data.inventory).toBe(8); // 10 - 2
+      }
+    }
+  });
+});
+```
+
+## Real-World Examples
+
+### Complex Business Logic: Order Creation with Inventory Management
+
+```typescript
+export const createOrderUseCase = async (
+  deps: {
+    orderRepository: OrderRepository;
+    productRepository: ProductRepository;
+    userRepository: UserRepository;
+    paymentService: PaymentService;
+    emailService: EmailService;
+    logger: Logger;
+  },
+  input: {
+    userId: string;
+    items: OrderItemInput[];
+    shippingAddress: Address;
+    paymentMethodId: string;
+  },
+): AsyncResult<{ orderId: string }, OrderError | ProductError | PaymentError | UserError> => {
+  // 1. Validate user exists and is authorized
+  const userResult = await deps.userRepository.getById({
+    id: input.userId,
+  });
+
+  if (!userResult.ok) {
+    deps.logger.error('User not found for order creation', {
+      userId: input.userId,
+      error: userResult.error,
+    });
+    return err(userResult.error);
+  }
+
+  if (userResult.data.status === 'SUSPENDED') {
+    return err({
+      code: 'USER_UNAUTHORIZED_ERROR',
+      message: 'Cannot create order for suspended user',
+    });
+  }
+
+  // 2. Validate all products and check inventory
+  const productValidations = await Promise.all(
+    input.items.map(async (item) => {
+      const productResult = await deps.productRepository.getById({
+        id: item.productId,
+      });
+
+      if (!productResult.ok) {
+        return productResult;
+      }
+
+      if (productResult.data.status !== 'ACTIVE') {
+        return err({
+          code: 'PRODUCT_NOT_AVAILABLE_ERROR',
+          message: `Product ${item.productId} is not available`,
+        });
+      }
+
+      if (productResult.data.inventory < item.quantity) {
+        return err({
+          code: 'PRODUCT_INSUFFICIENT_INVENTORY_ERROR',
+          message: `Insufficient inventory for product ${item.productId}`,
+        });
+      }
+
+      return ok(productResult.data);
+    }),
+  );
+
+  // Check if any product validation failed
+  const failedValidation = productValidations.find((result) => !result.ok);
+  if (failedValidation && !failedValidation.ok) {
+    return err(failedValidation.error);
+  }
+
+  // 3. Calculate total amount and apply business rules
+  const products = productValidations.map((result) => result.data!);
+  let totalAmount = input.items.reduce((sum, item, index) => {
+    return sum + (products[index].price.amount * item.quantity);
+  }, 0);
+
+  // Apply discount for bulk orders
+  if (totalAmount > 10000) { // $100 minimum for 10% discount
+    totalAmount = Math.floor(totalAmount * 0.9);
+  }
+
+  // 4. Reserve inventory (optimistic locking)
+  const reservationResults = await Promise.all(
+    input.items.map((item) =>
+      deps.productRepository.updateInventory({
+        id: item.productId,
+        quantity: -item.quantity,
+      }),
+    ),
+  );
+
+  const failedReservation = reservationResults.find((result) => !result.ok);
+  if (failedReservation && !failedReservation.ok) {
+    deps.logger.error('Failed to reserve inventory', {
+      error: failedReservation.error,
+    });
+    return err({
+      code: 'ORDER_INVENTORY_RESERVATION_ERROR',
+      message: 'Failed to reserve product inventory',
+    });
+  }
+
+  try {
+    // 5. Process payment
+    const paymentResult = await deps.paymentService.processPayment({
+      amount: { amount: totalAmount, currency: 'USD' },
+      paymentMethodId: input.paymentMethodId,
+      customerId: input.userId,
+      metadata: {
+        orderId: 'pending',
+        itemCount: input.items.length.toString(),
+      },
+    });
+
+    if (!paymentResult.ok) {
+      // Rollback inventory reservation
+      await Promise.all(
+        input.items.map((item) =>
+          deps.productRepository.updateInventory({
+            id: item.productId,
+            quantity: item.quantity, // Restore inventory
+          }),
+        ),
+      );
+      
+      return err(paymentResult.error);
+    }
+
+    // 6. Create the order
+    const orderResult = await deps.orderRepository.create({
+      userId: input.userId,
+      items: input.items,
+      shippingAddress: input.shippingAddress,
+      totalAmount: { amount: totalAmount, currency: 'USD' },
+      paymentId: paymentResult.data.paymentId,
+      status: 'CONFIRMED',
+    });
+
+    if (!orderResult.ok) {
+      // Rollback payment and inventory
+      await deps.paymentService.refundPayment({
+        paymentId: paymentResult.data.paymentId,
+      });
+      
+      await Promise.all(
+        input.items.map((item) =>
+          deps.productRepository.updateInventory({
+            id: item.productId,
+            quantity: item.quantity,
+          }),
+        ),
+      );
+      
+      return err(orderResult.error);
+    }
+
+    // 7. Send confirmation email
+    await deps.emailService.sendOrderConfirmation({
+      email: userResult.data.email,
+      orderId: orderResult.data.id,
+      items: input.items.map((item, index) => ({
+        productName: products[index].name,
+        quantity: item.quantity,
+        price: products[index].price,
+      })),
+      totalAmount: { amount: totalAmount, currency: 'USD' },
+    });
+
+    deps.logger.info('Order created successfully', {
+      orderId: orderResult.data.id,
+      userId: input.userId,
+      totalAmount,
+    });
+
+    return ok({ orderId: orderResult.data.id });
+  } catch (error) {
+    // Rollback inventory reservation on unexpected error
+    await Promise.all(
+      input.items.map((item) =>
+        deps.productRepository.updateInventory({
+          id: item.productId,
+          quantity: item.quantity,
+        }),
+      ),
+    );
+
+    deps.logger.error('Unexpected error during order creation', {
+      error,
+      userId: input.userId,
+    });
+
+    return err({
+      code: 'ORDER_CREATE_ERROR',
+      message: 'Unexpected error during order creation',
+    });
+  }
+};
+```
+
+### Advanced Error Handling
+
+```typescript
+export const processPaymentUseCase = async (
+  deps: {
+    paymentRepository: PaymentRepository;
+    pledgeRepository: PledgeRepository;
+    emailService: EmailService;
+  },
+  input: {
+    pledgeToken: string;
+    paymentMethodId: string;
+  },
+): AsyncResult<{ orderId: string }, PaymentError | PledgeError> => {
+  try {
+    // 1. Get pledge details
+    const pledgeResult = await deps.pledgeRepository.getByToken({
+      token: input.pledgeToken,
+    });
+
+    if (!pledgeResult.ok) {
+      return err(pledgeResult.error);
+    }
+
+    // 2. Process payment
+    const paymentResult = await deps.paymentRepository.processPayment({
+      amount: pledgeResult.data.totalAmount,
+      paymentMethodId: input.paymentMethodId,
+    });
+
+    if (!paymentResult.ok) {
+      // Send failure notification
+      await deps.emailService.sendPaymentFailureEmail({
+        email: pledgeResult.data.backerEmail,
+        reason: paymentResult.error.message,
+      });
+      
+      return err(paymentResult.error);
+    }
+
+    // 3. Complete pledge
+    const completeResult = await deps.pledgeRepository.completeCheckout({
+      token: input.pledgeToken,
+    });
+
+    if (!completeResult.ok) {
+      // Refund payment if pledge completion fails
+      await deps.paymentRepository.refundPayment({
+        paymentId: paymentResult.data.paymentId,
+      });
+      
+      return err(completeResult.error);
+    }
+
+    // 4. Send success notification
+    await deps.emailService.sendPaymentSuccessEmail({
+      email: pledgeResult.data.backerEmail,
+      orderId: completeResult.data.orderId,
+    });
+
+    return ok({ orderId: completeResult.data.orderId });
+  } catch (error) {
+    return err({
+      code: 'PAYMENT_PROCESSING_ERROR',
+      message: 'Unexpected error during payment processing',
+    });
+  }
+};
+```
+
+## Conclusion
+
+Domain-Driven Design with Next.js provides a robust architecture for building maintainable, scalable web applications. The key benefits include:
+
+- **Clear Separation**: Business logic separate from UI concerns
+- **Type Safety**: Full TypeScript support across all layers
+- **Testability**: Easy to unit test business logic
+- **Flexibility**: Easy to swap implementations
+- **Error Handling**: Consistent, type-safe error management
+
+By following the patterns and practices outlined in this guide, you can build applications that are not only functional but also maintainable and extensible as your business grows.
+
+### Additional Resources
+
+- [Domain-Driven Design by Eric Evans](https://www.domainlanguage.com/ddd/)
+- [Clean Architecture by Robert Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
