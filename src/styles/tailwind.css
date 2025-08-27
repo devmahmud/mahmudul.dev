@@ -161,7 +161,7 @@ hr {
 }
 
 pre {
-  @apply !px-0 rounded-2xl bg-black;
+  @apply !px-0 rounded-2xl bg-black overflow-x-auto max-w-full;
 }
 
 code {
@@ -176,6 +176,26 @@ pre > code {
 
 .prose {
   @apply max-w-[88rem] sm:text-lg md:text-xl !leading-7 sm:!leading-9;
+}
+
+/* Table responsive styling */
+.prose table {
+  @apply min-w-full overflow-x-auto;
+}
+
+.prose .table-wrapper {
+  @apply overflow-x-auto max-w-full;
+}
+
+/* Global table scrolling for all tables */
+table {
+  @apply min-w-max;
+}
+
+/* Prevent table overflow issues */
+.post table,
+.prose table {
+  @apply table-auto;
 }
 
 /* Enhanced card hover effects - removed position change for stability */

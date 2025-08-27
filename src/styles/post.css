@@ -6,6 +6,12 @@
   @apply rounded-md bg-black px-1 py-[2px] text-neutral-300;
 }
 
+/* Inline code specific styling */
+.post p code,
+.post li code {
+  @apply whitespace-normal;
+}
+
 .post h1 {
   @apply mt-8 text-4xl font-bold;
 }
@@ -34,8 +40,9 @@
   @apply list-decimal pl-6;
 }
 
-.post table {
-  @apply w-full border-collapse border border-zinc-700 rounded-lg overflow-hidden my-6;
+/* Table styling for tables not in wrapper (fallback) */
+.post > table {
+  @apply border-collapse border border-zinc-700 rounded-lg my-6 min-w-max overflow-x-auto max-w-full;
 }
 
 .post thead {
@@ -79,24 +86,62 @@ div[data-rehype-pretty-code-fragment] {
 }
 
 div[data-rehype-pretty-code-fragment] pre {
-  @apply border-none px-0 overflow-x-auto bg-black rounded-md;
+  @apply border-none px-0 overflow-x-auto bg-black rounded-md max-w-full;
 }
 
 div[data-rehype-pretty-code-fragment] pre code {
-  @apply bg-transparent p-4;
+  @apply bg-transparent p-4 whitespace-pre;
 }
 
 /* Ensure code blocks have proper background coverage when scrolling */
 .post pre {
-  @apply bg-black rounded-md;
+  @apply bg-black rounded-md overflow-x-auto max-w-full;
 }
 
 .post pre code {
-  @apply bg-transparent;
+  @apply bg-transparent whitespace-pre;
 }
 
 div[data-rehype-pretty-code-fragment] code {
   @apply flex flex-col;
+}
+
+/* Ensure code blocks don't overflow their containers */
+.post div[data-rehype-pretty-code-fragment] {
+  @apply max-w-full;
+}
+
+/* Table wrapper for horizontal scrolling */
+.post .table-wrapper {
+  @apply overflow-x-auto max-w-full my-6 rounded-lg border border-zinc-700;
+}
+
+/* Ensure tables inside wrapper are properly styled */
+.post .table-wrapper table {
+  @apply border-collapse border border-zinc-700 rounded-lg min-w-full my-0;
+}
+
+/* Ensure table cells don't wrap unnecessarily */
+.post th,
+.post td {
+  @apply whitespace-nowrap;
+}
+
+/* Allow some wrapping for content-heavy cells */
+.post td:has(p),
+.post td:has(ul),
+.post td:has(ol) {
+  @apply whitespace-normal;
+}
+
+/* Ensure table doesn't break page layout */
+.post table {
+  @apply table-auto;
+}
+
+/* Ensure table container doesn't overflow */
+.post {
+  @apply overflow-x-hidden;
 }
 
 .post > * {

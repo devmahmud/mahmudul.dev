@@ -1,12 +1,5 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 const colors = require('tailwindcss/colors');
-// const config = require("./tailwind.theme.config.cjs");
-//
-// const themeConfig =
-//   process.env.THEME_KEY && config[process.env.THEME_KEY]
-//     ? config[process.env.THEME_KEY]
-//     : config.default;
-// const { colors } = themeConfig;
 
 const linkHeadingStyles = {
   color: colors.gray[100],
@@ -60,6 +53,9 @@ module.exports = {
           css: {
             pre: {
               background: 'rgba(205, 200, 255, 0.05)',
+              overflow: 'auto',
+              maxWidth: '100%',
+              whiteSpace: 'pre',
             },
             'h2 a': linkHeadingStyles,
             'h3 a': linkHeadingStyles,
@@ -72,6 +68,10 @@ module.exports = {
               borderLeftColor: colors.zinc[700],
               'p::before': { display: 'none' },
               'p::after': { display: 'none' },
+            },
+            table: {
+              minWidth: '100%',
+              overflow: 'auto',
             },
             a: {
               textDecoration: 'none',
@@ -103,6 +103,15 @@ module.exports = {
               '[data-highlighted-line]::before': {
                 color: colors.slate[400],
               },
+            },
+            '[data-rehype-pretty-code-fragment]': {
+              maxWidth: '100%',
+              overflow: 'hidden',
+            },
+            '[data-rehype-pretty-code-fragment] pre': {
+              overflow: 'auto',
+              maxWidth: '100%',
+              whiteSpace: 'pre',
             },
           },
         },

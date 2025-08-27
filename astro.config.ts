@@ -12,6 +12,7 @@ import type { Options as PrettyCodeOptions } from 'rehype-pretty-code';
 import Icons from 'unplugin-icons/vite';
 import { SITE_URL } from './src/data/config';
 import { remarkReadingTime } from './src/plugins';
+import rehypeTableWrapper from './src/plugins/rehype-table-wrapper';
 import partytown from '@astrojs/partytown';
 
 const prettyCodeOptions: PrettyCodeOptions = {
@@ -44,7 +45,7 @@ export default defineConfig({
   ],
   markdown: {
     syntaxHighlight: false,
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions]],
+    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeTableWrapper],
     remarkPlugins: [remarkReadingTime],
   },
   output: 'server',
