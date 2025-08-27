@@ -4,7 +4,7 @@ import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import prefetch from '@astrojs/prefetch';
 import preact from '@astrojs/preact';
-import vercel from '@astrojs/vercel';
+import vercel from '@astrojs/vercel/serverless';
 import { defineConfig } from 'astro/config';
 import rehypePrettyCode from 'rehype-pretty-code';
 import type { Options as PrettyCodeOptions } from 'rehype-pretty-code';
