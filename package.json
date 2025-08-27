@@ -18,7 +18,7 @@
     "@astrojs/prefetch": "^0.4.0",
     "@astrojs/sitemap": "^3.0.0",
     "@astrojs/tailwind": "^5.0.0",
-    "@astrojs/vercel": "^4.0.0",
+    "@astrojs/vercel": "^8.2.6",
     "@fontsource/open-sans": "^5.0.1",
     "@iconify-json/simple-icons": "^1.1.62",
     "@iconify/icons-tabler": "^1.2.84",
