@@ -82,7 +82,7 @@ hr {
 }
 
 pre {
-  @apply !px-0 rounded-2xl;
+  @apply !px-0 rounded-2xl bg-black;
 }
 
 code {

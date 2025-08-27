@@ -27,7 +27,11 @@
 }
 
 .post ul {
-  @apply list-disc;
+  @apply list-disc pl-6;
+}
+
+.post ol {
+  @apply list-decimal pl-6;
 }
 
 .post table {
@@ -75,7 +79,20 @@ div[data-rehype-pretty-code-fragment] {
 }
 
 div[data-rehype-pretty-code-fragment] pre {
-  @apply border-none px-0 overflow-x-auto;
+  @apply border-none px-0 overflow-x-auto bg-black rounded-md;
+}
+
+div[data-rehype-pretty-code-fragment] pre code {
+  @apply bg-transparent p-4;
+}
+
+/* Ensure code blocks have proper background coverage when scrolling */
+.post pre {
+  @apply bg-black rounded-md;
+}
+
+.post pre code {
+  @apply bg-transparent;
 }
 
 div[data-rehype-pretty-code-fragment] code {
