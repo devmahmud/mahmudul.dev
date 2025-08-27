@@ -3,7 +3,7 @@
 }
 
 .post code {
-  @apply rounded-md bg-black px-1 py-[2px] text-red-500;
+  @apply rounded-md bg-black px-1 py-[2px] text-neutral-300;
 }
 
 .post h1 {
