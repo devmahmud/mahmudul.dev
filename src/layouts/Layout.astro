@@ -47,8 +47,8 @@ const { title, og, article } = Astro.props;
     <!-- Subtle noise texture overlay -->
     <div class="fixed inset-0 bg-[url('data:image/svg+xml,%3Csvg viewBox=&quot;0 0 200 200&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cfilter id=&quot;noise&quot;%3E%3CfeTurbulence type=&quot;fractalNoise&quot; baseFrequency=&quot;0.65&quot; numOctaves=&quot;3&quot; stitchTiles=&quot;stitch&quot;/%3E%3C/filter%3E%3Crect width=&quot;100%25&quot; height=&quot;100%25&quot; filter=&quot;url(%23noise)&quot; opacity=&quot;0.03&quot;/%3E%3C/svg%3E')] opacity-20"></div>
     
-    <!-- Content wrapper -->
-    <div class="relative z-10 min-h-screen">
+    <!-- Content wrapper with flexbox for sticky footer -->
+    <div class="relative z-10 min-h-screen flex flex-col">
       <!-- Header -->
       <div class="sticky top-0 z-50 backdrop-blur-2xl bg-black/20 border-b border-white/10 shadow-2xl">
         <div class="mx-auto w-full max-w-7xl px-4 py-2 sm:px-6 sm:py-3 lg:px-8">
@@ -56,14 +56,14 @@ const { title, og, article } = Astro.props;
         </div>
       </div>
       
-      <!-- Main content -->
-      <main class="relative">
+      <!-- Main content - flex-grow to push footer down -->
+      <main class="relative flex-grow">
         <div class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <slot />
         </div>
       </main>
 
-      <!-- Footer -->
+      <!-- Footer - will stay at bottom when content is minimal -->
       <Footer />
     </div>
     
