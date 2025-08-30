@@ -23,34 +23,65 @@ const { views } = await viewsAPI.json().catch(() => ({ views: 0 }));
 const isPlanned = post.data.planned;
 ---
 
-<a
-  class:list={[
-    "group relative block h-full overflow-hidden rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 p-8 transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-lg",
-    !isPlanned && "hover:text-neutral-100",
-  ]}
-  href={post.data.planned ? null : `/posts/${post.slug}`}
->
+{
+  isPlanned ? (
+    <div
+      class="group relative block h-full overflow-hidden rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 p-8 transition-all duration-300"
+      aria-label={`Planned post: ${post.data.title}`}
+    >
+      <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/40 via-purple-500/40 to-indigo-500/40 p-[1px]">
+          <div class="w-full h-full rounded-2xl bg-slate-950/90 backdrop-blur-2xl"></div>
+        </div>
+      </div>
+      
+      <div class="relative flex h-full flex-col justify-between">
+        <div class="space-y-6">
+          <div class="flex items-start justify-between">
+            <h3 class="text-lg font-bold text-white line-clamp-2">
+              {post.data.title}
+            </h3>
+          </div>
+          
+          <p class="text-sm text-neutral-300 line-clamp-3">
+            {post.data.description}
+          </p>
+        </div>
 
-  <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-    <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/40 via-purple-500/40 to-indigo-500/40 p-[1px]">
-      <div class="w-full h-full rounded-2xl bg-slate-950/90 backdrop-blur-2xl"></div>
+        <div class="mt-8 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="inline-flex items-center rounded-full bg-orange-500/20 px-4 py-2 text-sm font-medium text-orange-300 border border-orange-500/30 backdrop-blur-sm transition-all duration-300">
+              Planned
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  
-  <div class="relative flex h-full flex-col justify-between">
-    <div class="space-y-6">
-      <div class="flex items-start justify-between">
-        <h3 class="text-lg font-bold text-white line-clamp-2 group-hover:text-violet-100 transition-colors duration-300">
-          {post.data.title}
-        </h3>
-        {
-          !post.data.planned && (
+  ) : (
+    <a
+      class="group relative block h-full overflow-hidden rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 p-8 transition-all duration-300 hover:bg-white/10 hover:border-white/20 hover:shadow-lg hover:text-neutral-100"
+      href={`/posts/${post.slug}`}
+      aria-label={`Read post: ${post.data.title}`}
+    >
+      <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-violet-500/40 via-purple-500/40 to-indigo-500/40 p-[1px]">
+          <div class="w-full h-full rounded-2xl bg-slate-950/90 backdrop-blur-2xl"></div>
+        </div>
+      </div>
+      
+      <div class="relative flex h-full flex-col justify-between">
+        <div class="space-y-6">
+          <div class="flex items-start justify-between">
+            <h3 class="text-lg font-bold text-white line-clamp-2 group-hover:text-violet-100 transition-colors duration-300">
+              {post.data.title}
+            </h3>
             <svg
               width="24"
               height="24"
               viewBox="0 0 24 24"
               fill="none"
               class="mt-1 flex-shrink-0 text-neutral-400 transition-colors duration-300 group-hover:text-violet-400"
+              aria-hidden="true"
             >
               <path
                 d="M7 17L17 7"
@@ -67,37 +98,23 @@ const isPlanned = post.data.planned;
                 stroke-width="2"
               />
             </svg>
-          )
-        }
-      </div>
-      
-      <p class="text-sm text-neutral-300 line-clamp-3 group-hover:text-neutral-200 transition-colors duration-300">
-        {post.data.description}
-      </p>
-    </div>
-
-    <div class="mt-8 flex items-center justify-between">
-      {
-        isPlanned ? (
-          <div class="flex items-center gap-2">
-            <span class="inline-flex items-center rounded-full bg-orange-500/20 px-4 py-2 text-sm font-medium text-orange-300 border border-orange-500/30 backdrop-blur-sm transition-all duration-300 group-hover:bg-orange-500/30">
-              Planned
-            </span>
           </div>
-        ) : (
+          
+          <p class="text-sm text-neutral-300 line-clamp-3 group-hover:text-neutral-200 transition-colors duration-300">
+            {post.data.description}
+          </p>
+        </div>
+
+        <div class="mt-8 flex items-center justify-between">
           <div class="flex items-center gap-2 text-sm text-neutral-400 group-hover:text-neutral-300 transition-colors duration-300">
             <Eye />
             <Odometer client:only slug={post.slug} update /> views
           </div>
-        )
-      }
-      {
-        !isPlanned && (
           <span class="text-sm text-neutral-400 group-hover:text-neutral-300 transition-colors duration-300">
             {formatDate(post.data.publishedAt)}
           </span>
-        )
-      }
-    </div>
-  </div>
-</a>
+        </div>
+      </div>
+    </a>
+  )
+}

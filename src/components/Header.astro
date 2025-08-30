@@ -14,7 +14,7 @@ const notInHome = pathname !== "/";
       notInHome ? (
         <a 
           href="/" 
-          class="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 bg-clip-text text-transparent hover:from-indigo-300 hover:via-purple-300 hover:to-violet-300 transition-all duration-300 ease-out"
+          class="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 bg-clip-text text-transparent hover:from-indigo-300 hover:via-purple-300 hover:to-violet-300 transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
           aria-current={pathname === "/" ? "page" : undefined}
         >
           Mahmudul
@@ -22,7 +22,7 @@ const notInHome = pathname !== "/";
       ) : (
         <a 
           href={`mailto:${presentation.mail}`} 
-          class="text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 ease-out relative group"
+          class="text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
         >
           {presentation.mail}
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"></span>
@@ -38,8 +38,8 @@ const notInHome = pathname !== "/";
         <a
           href="/"
           class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none"]: pathname === "/",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none"]: pathname !== "/",
+            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/",
+            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/",
           }}
           aria-current={pathname === "/" ? "page" : undefined}
         >
@@ -59,8 +59,8 @@ const notInHome = pathname !== "/";
         <a
           href="/resume"
           class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none"]: pathname === "/resume",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none"]: pathname !== "/resume",
+            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/resume",
+            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/resume",
           }}
           aria-current={pathname === "/resume" ? "page" : undefined}
         >
@@ -80,8 +80,8 @@ const notInHome = pathname !== "/";
         <a
           href="/posts"
           class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none"]: pathname === "/posts",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none"]: pathname !== "/posts",
+            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/posts",
+            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/posts",
           }}
           aria-current={pathname === "/posts" ? "page" : undefined}
         >
@@ -101,8 +101,8 @@ const notInHome = pathname !== "/";
         <a
           href="/planned"
           class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none"]: pathname === "/planned",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none"]: pathname !== "/planned",
+            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/planned",
+            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/planned",
           }}
           aria-current={pathname === "/planned" ? "page" : undefined}
         >
@@ -122,8 +122,8 @@ const notInHome = pathname !== "/";
         <a
           href="/til"
           class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none"]: pathname === "/til",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none"]: pathname !== "/til",
+            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/til",
+            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/til",
           }}
           aria-current={pathname === "/til" ? "page" : undefined}
         >

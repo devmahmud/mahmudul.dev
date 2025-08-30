@@ -13,11 +13,13 @@ const { headings } = Astro.props;
 const toc = generateToc(headings);
 ---
 
-<aside class="sticky top-24 order-2 hidden xl:block slide-enter-content w-72 shrink-0">
+<aside class="sticky top-24 order-2 hidden xl:block slide-enter-content w-72 shrink-0" aria-labelledby="toc-heading">
 	<div class="rounded-2xl backdrop-blur-xl bg-white/5 border border-white/10 p-4 shadow-lg">
-		<h2 class="font-semibold text-slate-200 mb-4 text-xs sm:text-sm">Table of Contents</h2>
-		<ul class="text-xs space-y-1 overflow-y-auto max-h-[calc(100vh-200px)] toc-scrollbar custom-toc-scrollbar" style="scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.06) transparent;">
-			{toc.map((heading) => <TOCHeading heading={heading} />)}
-		</ul>
+		<h2 id="toc-heading" class="font-semibold text-slate-200 mb-4 text-xs sm:text-sm">Table of Contents</h2>
+		<nav aria-label="Table of contents">
+			<ul class="text-xs space-y-1 overflow-y-auto max-h-[calc(100vh-200px)] toc-scrollbar custom-toc-scrollbar" style="scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.06) transparent;">
+				{toc.map((heading) => <TOCHeading heading={heading} />)}
+			</ul>
+		</nav>
 	</div>
 </aside>

@@ -50,6 +50,7 @@ const formatTechs = (values: string[]) =>
           href={link}
           target="_blank"
           rel="noreferrer prefetch"
+          aria-label={`Visit project: ${title}`}
         >
 
         <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
@@ -70,6 +71,7 @@ const formatTechs = (values: string[]) =>
                 viewBox="0 0 24 24"
                 fill="none"
                 class="mt-1 flex-shrink-0 text-gray-400 transition-colors duration-300 group-hover:text-indigo-400"
+                aria-hidden="true"
               >
                 <path
                   d="M7 17L17 7"

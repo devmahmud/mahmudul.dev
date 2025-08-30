@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "preact/hooks";
-import OdometerController from "odometer";
+import { useEffect, useRef } from 'preact/hooks';
+import OdometerController from 'odometer';
 
 export const Odometer = (
   props:
@@ -21,12 +21,12 @@ export const Odometer = (
     });
 
     // If data is provided, update Odometer value
-    if ("data" in props) {
+    if ('data' in props) {
       odometerInstance.update(props.data);
     } else {
       (async () => {
         const viewsAPI = await fetch(`/api/view/${props.slug}`, {
-          method: props.update ? "POST" : "GET",
+          method: props.update ? 'POST' : 'GET',
         });
         const { views } = await viewsAPI.json().catch(() => ({ views: 0 }));
 
@@ -34,7 +34,9 @@ export const Odometer = (
         odometerInstance.update(views);
       })();
     }
-  }, ["data" in props ? props.data : props.slug]);
+  }, ['data' in props ? props.data : props.slug]);
 
-  return <div ref={odometerRef} />;
+  const value = 'data' in props ? props.data : 0;
+
+  return <div ref={odometerRef} aria-label={`${value} views`} aria-live="polite" />;
 };

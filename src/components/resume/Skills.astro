@@ -17,14 +17,15 @@ const skills = resume.skills;
         <h4 class="text-lg font-semibold text-white">{skill.category}</h4>
         <div class="grid grid-cols-4 sm:grid-cols-6 gap-4">
           {skill.stacks.map((item) => (
-            <div class="skill-item relative">
+            <div class="skill-item relative" role="img" aria-label={`${item.name} - ${Array(item.rate).fill('★').join('')} stars`}>
               <img
                 src={item.icon}
-                alt={item.name}
+                alt=""
                 class="h-[32px] w-[32px] transition-opacity duration-200 rounded-lg"
                 title={`${item.name} - ${Array(item.rate).fill('★').join('')}`}
+                aria-hidden="true"
               />
-              <div class="skill-tooltip absolute -bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 transition-opacity duration-200 z-20 pointer-events-none">
+              <div class="skill-tooltip absolute -bottom-10 left-1/2 transform -translate-x-1/2 opacity-0 transition-opacity duration-200 z-20 pointer-events-none" aria-hidden="true">
                 <span class="text-xs text-slate-300 whitespace-nowrap bg-slate-800/90 backdrop-blur-sm border border-slate-600/50 px-3 py-1.5 rounded-lg shadow-lg">
                   {item.name}
                 </span>

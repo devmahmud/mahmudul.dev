@@ -10,7 +10,7 @@ import presentation from "@/data/presentation";
       <!-- Brand Section -->
       <div class="sm:col-span-2 lg:col-span-1">
         <div class="flex items-center space-x-3 mb-3">
-          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center">
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center" aria-hidden="true">
             <span class="text-white font-bold">M</span>
           </div>
           <h3 class="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 bg-clip-text text-transparent">
@@ -27,22 +27,22 @@ import presentation from "@/data/presentation";
         <h4 class="font-semibold text-slate-200 mb-4">Navigation</h4>
         <ul class="space-y-3">
           <li>
-            <a href="/" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200">
+            <a href="/" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded">
               Home
             </a>
           </li>
           <li>
-            <a href="/posts" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200">
+            <a href="/posts" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded">
               Posts
             </a>
           </li>
           <li>
-            <a href="/resume" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200">
+            <a href="/resume" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded">
               Resume
             </a>
           </li>
           <li>
-            <a href="/til" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200">
+            <a href="/til" class="text-slate-400 hover:text-indigo-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded">
               TIL
             </a>
           </li>
@@ -55,9 +55,10 @@ import presentation from "@/data/presentation";
         <div class="space-y-3">
           <a 
             href={`mailto:${presentation.mail}`}
-            class="flex items-center text-slate-400 hover:text-indigo-300 transition-colors duration-200 group"
+            class="flex items-center text-slate-400 hover:text-indigo-300 transition-colors duration-200 group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
+            aria-label={`Send email to ${presentation.mail}`}
           >
-            <svg class="w-4 h-4 mr-2 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 mr-2 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
             </svg>
             {presentation.mail}
@@ -77,18 +78,18 @@ import presentation from "@/data/presentation";
         <div class="text-sm text-slate-500 text-center sm:text-left">
           <p>
             © {new Date().getFullYear()} Mahmudul Alam. Built with 
-            <span class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200">♥</span>
+            <span class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200" role="img" aria-label="heart">♥</span>
           </p>
         </div>
 
         <!-- Back to Top -->
         <button 
           onclick="window.scrollTo({ top: 0, behavior: 'smooth' })"
-          class="group flex items-center space-x-2 text-sm text-slate-400 hover:text-indigo-300 transition-colors duration-200"
+          class="group flex items-center space-x-2 text-sm text-slate-400 hover:text-indigo-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
           aria-label="Back to top"
         >
           <span>Back to top</span>
-          <svg class="w-4 h-4 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
           </svg>
         </button>
@@ -97,5 +98,5 @@ import presentation from "@/data/presentation";
   </div>
 
   <!-- Subtle gradient overlay -->
-  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent pointer-events-none"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent pointer-events-none" aria-hidden="true"></div>
 </footer>

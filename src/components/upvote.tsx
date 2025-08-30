@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "preact/hooks";
-import { Odometer } from "./odometer";
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { Odometer } from './odometer';
 
 export const Upvote = ({ slug }: { slug: string }) => {
   // State for upvote count
@@ -10,7 +10,7 @@ export const Upvote = ({ slug }: { slug: string }) => {
 
   // Check local storage for existing upvotes
   const checkUpvoted = () => {
-    return localStorage.getItem(`upvoted-${slug}`) === "true";
+    return localStorage.getItem(`upvoted-${slug}`) === 'true';
   };
 
   // Fetch the initial upvote count on component mount
@@ -23,8 +23,8 @@ export const Upvote = ({ slug }: { slug: string }) => {
   // Handle upvote action
   const handleUpvote = () => {
     // Mark as upvoted in local storage
-    localStorage.setItem(`upvoted-${slug}`, "true");
-    fetch(`/api/upvote/${slug}`, { method: "POST" })
+    localStorage.setItem(`upvoted-${slug}`, 'true');
+    fetch(`/api/upvote/${slug}`, { method: 'POST' })
       .then((res) => res.json())
       .then((data) => {
         setCount(data.upvotes ?? 0);
@@ -36,17 +36,21 @@ export const Upvote = ({ slug }: { slug: string }) => {
     upvoteBtnRef.current.disabled = checkUpvoted();
   }
 
+  const isUpvoted = checkUpvoted();
+
   return (
     <div className="flex items-center">
       <button
         ref={upvoteBtnRef}
         onClick={handleUpvote}
-        data-disabled={checkUpvoted()}
-        className="rounded bg-neutral-800 px-2 py-1 font-bold text-white hover:cursor-pointer hover:bg-neutral-700 disabled:bg-neutral-900 disabled:hover:cursor-not-allowed"
+        disabled={isUpvoted}
+        aria-label={isUpvoted ? 'Already upvoted' : 'Upvote this post'}
+        aria-pressed={isUpvoted}
+        className="rounded bg-neutral-800 px-2 py-1 font-bold text-white hover:cursor-pointer hover:bg-neutral-700 disabled:bg-neutral-900 disabled:hover:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950"
       >
-        Upvote
+        {isUpvoted ? 'Upvoted' : 'Upvote'}
       </button>
-      <span className="ml-2">
+      <span className="ml-2" aria-label={`${count} upvotes`}>
         <Odometer data={count} />
       </span>
     </div>

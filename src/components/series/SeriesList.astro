@@ -9,8 +9,8 @@ export interface Props {
 const { series } = Astro.props;
 ---
 
-<section>
-  <ul class="flex flex-col space-y-4">
+<section aria-label="Blog post series">
+  <ul class="flex flex-col space-y-4" role="list">
     {series.map((s) => (<li><SeriesCard series={s} /></li>))}
   </ul>
 </section>

@@ -15,8 +15,9 @@ const posts = (await getCollection("posts"))
 ---
 
 <a
-  class="group flex flex-col gap-2 border-t border-neutral-700 py-4 transition-all hover:text-neutral-100"
+  class="group flex flex-col gap-2 border-t border-neutral-700 py-4 transition-all hover:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
   href={`/posts/${posts[0].slug}`}
+  aria-label={`Read series: ${series.data.title}`}
 >
   <div class="flex w-full items-center justify-between">
     <h2 class="text-lg">{series.data.title}</h2>
@@ -29,6 +30,7 @@ const posts = (await getCollection("posts"))
         viewBox="0 0 18 18"
         fill="none"
         class="transition-colors duration-300"
+        aria-hidden="true"
       >
         <path
           d="M5.25 12.75L12.75 5.25"
