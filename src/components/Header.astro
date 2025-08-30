@@ -9,7 +9,7 @@ const notInHome = pathname !== "/";
 
 <header class="flex w-full items-center justify-between md:py-4">
   <!-- Logo/Brand -->
-  <div class="flex items-center">
+  <div class="flex items-center min-w-[200px]">
     {
       notInHome ? (
         <a 
@@ -22,7 +22,7 @@ const notInHome = pathname !== "/";
       ) : (
         <a 
           href={`mailto:${presentation.mail}`} 
-          class="text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
+          class="text-lg font-medium text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"
         >
           {presentation.mail}
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"></span>
