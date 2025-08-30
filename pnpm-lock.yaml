@@ -29,6 +29,9 @@ importers:
       '@astrojs/vercel':
         specifier: ^8.2.6
         version: 8.2.6(astro@5.13.3(@vercel/functions@2.2.13)(@vercel/kv@0.2.4)(jiti@1.21.6)(rollup@4.48.1)(sass@1.77.8)(typescript@5.5.4)(yaml@2.5.0))(react@19.1.1)(rollup@4.48.1)
+      '@fontsource/fira-code':
+        specifier: ^5.2.6
+        version: 5.2.6
       '@fontsource/open-sans':
         specifier: ^5.0.1
         version: 5.0.29
@@ -56,9 +59,6 @@ importers:
       chroma-js:
         specifier: ^2.4.2
         version: 2.6.0
-      gsap:
-        specifier: ^3.13.0
-        version: 3.13.0
       mdast-util-to-string:
         specifier: ^4.0.0
         version: 4.0.0
@@ -132,9 +132,6 @@ importers:
       prettier-plugin-tailwindcss:
         specifier: 0.3.0
         version: 0.3.0(prettier-plugin-astro@0.9.0)(prettier@2.8.8)
-      tailwind-scrollbar:
-        specifier: ^3.0.0
-        version: 3.1.0(tailwindcss@3.4.10)
       typescript:
         specifier: ^5.2.2
         version: 5.5.4
@@ -490,6 +487,9 @@ packages:
   '@eslint/js@8.41.0':
     resolution: {integrity: sha512-LxcyMGxwmTh2lY9FwHPGWOHmYFCZvbrFCBZL4FzSSsxsRPuhrYUg/49/0KDfW8tnIEaEHtfmn6+NPN+1DqaNmA==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+
+  '@fontsource/fira-code@5.2.6':
+    resolution: {integrity: sha512-wCkIpPm0BqlkCPLYeY4Vui96ODmVUV0/GpEe3OfJ4v8EJn/BF2SlyxvarFsTs1CKiGjrO2cXlIZbBrKi9F+hUQ==}
 
   '@fontsource/open-sans@5.0.29':
     resolution: {integrity: sha512-5ayVkmB5fY2NXm/YKF0UxtjWipLIqeXBxyhjtR46ab+z8xiJonolUBIVFYUfn5zH4FDf078zXbsIvmo82C0Aew==}
@@ -1872,9 +1872,6 @@ packages:
   graphemer@1.4.0:
     resolution: {integrity: sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==}
 
-  gsap@3.13.0:
-    resolution: {integrity: sha512-QL7MJ2WMjm1PHWsoFrAQH/J8wUeqZvMtHO58qdekHpCfhvhSL4gSiz6vJf5EeMP0LOn3ZCprL2ki/gjED8ghVw==}
-
   h3@1.15.4:
     resolution: {integrity: sha512-z5cFQWDffyOe4vQ9xIqNfCZdV4p//vy6fBnr8Q1AWnVZ0teurKMG66rLj++TKwKPUP3u7iMUvrvKaEUiQw2QWQ==}
 
@@ -3121,12 +3118,6 @@ packages:
   tailwind-merge@1.14.0:
     resolution: {integrity: sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==}
 
-  tailwind-scrollbar@3.1.0:
-    resolution: {integrity: sha512-pmrtDIZeHyu2idTejfV59SbaJyvp1VRjYxAjZBH0jnyrPRo6HL1kD5Glz8VPagasqr6oAx6M05+Tuw429Z8jxg==}
-    engines: {node: '>=12.13.0'}
-    peerDependencies:
-      tailwindcss: 3.x
-
   tailwindcss@3.4.10:
     resolution: {integrity: sha512-KWZkVPm7yJRhdu4SRSl9d4AK2wM3a50UsvgHZO7xY77NQr2V+fIrEuoDGQcbvswWvFGbS2f6e+jC/6WJm1Dl0w==}
     engines: {node: '>=14.0.0'}
@@ -3982,6 +3973,8 @@ snapshots:
       - supports-color
 
   '@eslint/js@8.41.0': {}
+
+  '@fontsource/fira-code@5.2.6': {}
 
   '@fontsource/open-sans@5.0.29': {}
 
@@ -5491,8 +5484,6 @@ snapshots:
   graceful-fs@4.2.11: {}
 
   graphemer@1.4.0: {}
-
-  gsap@3.13.0: {}
 
   h3@1.15.4:
     dependencies:
@@ -7127,10 +7118,6 @@ snapshots:
       tslib: 2.7.0
 
   tailwind-merge@1.14.0: {}
-
-  tailwind-scrollbar@3.1.0(tailwindcss@3.4.10):
-    dependencies:
-      tailwindcss: 3.4.10
 
   tailwindcss@3.4.10:
     dependencies:
