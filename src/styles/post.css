@@ -1,9 +1,9 @@
 .post p {
-  @apply leading-7;
+  @apply leading-6 text-sm sm:text-base;
 }
 
 .post code {
-  @apply rounded-md bg-black px-1 py-[2px] text-neutral-300;
+  @apply rounded-md bg-black px-1 py-[2px] text-neutral-300 text-xs sm:text-sm;
 }
 
 /* Inline code specific styling */
@@ -13,15 +13,27 @@
 }
 
 .post h1 {
-  @apply mt-8 text-4xl font-bold;
+  @apply mt-8 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl;
 }
 
 .post h2 {
-  @apply mt-6 text-3xl text-neutral-100 font-bold;
+  @apply mt-6 text-xl text-neutral-100 font-bold leading-tight sm:text-2xl md:text-3xl;
 }
 
 .post h3 {
-  @apply mt-4 text-xl text-neutral-100 font-bold;
+  @apply mt-4 text-lg text-neutral-100 font-bold leading-tight sm:text-xl md:text-2xl;
+}
+
+.post h4 {
+  @apply mt-4 text-base text-neutral-100 font-bold leading-tight sm:text-lg md:text-xl;
+}
+
+.post h5 {
+  @apply mt-4 text-sm text-neutral-100 font-bold leading-tight sm:text-base md:text-lg;
+}
+
+.post h6 {
+  @apply mt-4 text-xs text-neutral-100 font-bold leading-tight sm:text-sm md:text-base;
 }
 
 .post a {
@@ -33,16 +45,20 @@
 }
 
 .post ul {
-  @apply list-disc pl-6;
+  @apply list-disc pl-6 space-y-1;
 }
 
 .post ol {
-  @apply list-decimal pl-6;
+  @apply list-decimal pl-6 space-y-1;
+}
+
+.post li {
+  @apply text-sm sm:text-base leading-5 sm:leading-6;
 }
 
 /* Table styling for tables not in wrapper (fallback) */
 .post > table {
-  @apply border-collapse border border-zinc-700 rounded-lg my-6 min-w-max overflow-x-auto max-w-full;
+  @apply border-collapse border border-zinc-700 rounded-lg my-6 min-w-max overflow-x-auto max-w-full text-xs sm:text-sm;
 }
 
 .post thead {
@@ -50,11 +66,11 @@
 }
 
 .post th {
-  @apply border border-zinc-700 px-4 py-3 text-left font-semibold text-neutral-100;
+  @apply border border-zinc-700 px-3 py-2 text-left font-semibold text-neutral-100 sm:px-4 sm:py-3;
 }
 
 .post td {
-  @apply border border-zinc-700 px-4 py-3;
+  @apply border border-zinc-700 px-3 py-2 sm:px-4 sm:py-3;
 }
 
 .post tbody tr:nth-child(odd) {
@@ -70,7 +86,11 @@
 }
 
 .post blockquote {
-  @apply flex flex-row gap-2 before:block before:h-auto before:w-1 before:max-w-[1px] before:bg-red-400 before:content-[''];
+  @apply flex flex-row gap-2 before:block before:h-auto before:w-1 before:max-w-[1px] before:bg-red-400 before:content-[''] text-sm sm:text-base leading-5 sm:leading-6;
+}
+
+.post blockquote p {
+  @apply text-sm sm:text-base leading-5 sm:leading-6;
 }
 
 div[data-rehype-pretty-code-fragment] {
@@ -82,7 +102,7 @@ div[data-rehype-pretty-code-fragment] {
 }
 
 .post div[data-rehype-pretty-code-title] {
-  @apply absolute top-0 left-0 w-full rounded-t bg-zinc-900 py-1 px-2 text-sm text-slate-200 lg:px-4 lg:py-2;
+  @apply absolute top-0 left-0 w-full rounded-t bg-zinc-900 py-1 px-2 text-xs text-slate-200 lg:px-4 lg:py-2;
 }
 
 div[data-rehype-pretty-code-fragment] pre {
@@ -90,7 +110,7 @@ div[data-rehype-pretty-code-fragment] pre {
 }
 
 div[data-rehype-pretty-code-fragment] pre code {
-  @apply bg-transparent p-4 whitespace-pre;
+  @apply bg-transparent p-3 whitespace-pre text-xs sm:text-sm sm:p-4;
 }
 
 /* Ensure code blocks have proper background coverage when scrolling */
@@ -99,7 +119,7 @@ div[data-rehype-pretty-code-fragment] pre code {
 }
 
 .post pre code {
-  @apply bg-transparent whitespace-pre;
+  @apply bg-transparent whitespace-pre text-xs sm:text-sm;
 }
 
 div[data-rehype-pretty-code-fragment] code {
@@ -118,7 +138,7 @@ div[data-rehype-pretty-code-fragment] code {
 
 /* Ensure tables inside wrapper are properly styled */
 .post .table-wrapper table {
-  @apply border-collapse border border-zinc-700 rounded-lg min-w-full my-0;
+  @apply border-collapse border border-zinc-700 rounded-lg min-w-full my-0 text-xs sm:text-sm;
 }
 
 /* Ensure table cells don't wrap unnecessarily */

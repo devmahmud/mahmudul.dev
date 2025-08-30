@@ -29,6 +29,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'JetBrains Mono';
+  src: url('/fonts/JetBrainsMono-Bold.ttf') format('ttf');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   color-scheme: dark;
   --c-bg: #0f172a;
@@ -46,10 +54,19 @@
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  font-size: 14px;
+  line-height: 1.5;
+  font-feature-settings: 'liga' 1, 'calt' 1, 'ss01' 1;
+}
+
+@media (min-width: 640px) {
+  body {
+    font-size: 16px;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -165,8 +182,8 @@ pre {
 }
 
 code {
-  @apply !text-sm !leading-loose md:!leading-loose;
-  font-family: 'Iosevka', monospace;
+  @apply !text-xs sm:!text-sm !leading-loose md:!leading-loose;
+  font-family: 'JetBrains Mono', 'Iosevka', 'Fira Code', Consolas, monospace;
 }
 
 pre > code {
@@ -175,7 +192,7 @@ pre > code {
 }
 
 .prose {
-  @apply max-w-[88rem] sm:text-lg md:text-xl !leading-7 sm:!leading-9;
+  @apply max-w-[88rem] text-sm sm:text-base md:text-lg !leading-6 sm:!leading-7 md:!leading-8;
 }
 
 /* Table responsive styling */
@@ -421,6 +438,25 @@ h4,
 h5,
 h6 {
   @apply font-bold tracking-tight;
+}
+
+/* Improved letter spacing for better readability at smaller sizes */
+.post h1,
+.post h2,
+.post h3 {
+  @apply tracking-tight;
+}
+
+.post p,
+.post li,
+.post blockquote {
+  @apply tracking-wide;
+}
+
+/* Better contrast for small text */
+.text-xs,
+.text-sm {
+  @apply font-medium;
 }
 
 /* Improved link styling */

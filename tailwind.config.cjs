@@ -19,7 +19,21 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Open Sans', ...defaultTheme.fontFamily.sans],
+        sans: [
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          ...defaultTheme.fontFamily.sans,
+        ],
+        mono: [
+          'JetBrains Mono',
+          'Iosevka',
+          'Fira Code',
+          'Consolas',
+          ...defaultTheme.fontFamily.mono,
+        ],
         iosevka: ['Iosevka', ...defaultTheme.fontFamily.mono],
       },
       colors: {

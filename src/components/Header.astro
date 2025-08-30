@@ -7,14 +7,14 @@ const pathname = removeTrailingSlash(Astro.url.pathname);
 const notInHome = pathname !== "/";
 ---
 
-<header class="flex w-full items-center justify-between py-3 sm:py-4">
+<header class="flex w-full items-center justify-between md:py-4">
   <!-- Logo/Brand -->
   <div class="flex items-center">
     {
       notInHome ? (
         <a 
           href="/" 
-          class="text-xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 bg-clip-text text-transparent hover:from-indigo-300 hover:via-purple-300 hover:to-violet-300 transition-all duration-300 ease-out"
+          class="text-lg font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-violet-400 bg-clip-text text-transparent hover:from-indigo-300 hover:via-purple-300 hover:to-violet-300 transition-all duration-300 ease-out"
           aria-current={pathname === "/" ? "page" : undefined}
         >
           Mahmudul
@@ -22,7 +22,7 @@ const notInHome = pathname !== "/";
       ) : (
         <a 
           href={`mailto:${presentation.mail}`} 
-          class="text-lg font-medium text-gray-300 hover:text-white transition-all duration-300 ease-out relative group"
+          class="text-sm font-medium text-gray-300 hover:text-white transition-all duration-300 ease-out relative group"
         >
           {presentation.mail}
           <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"></span>

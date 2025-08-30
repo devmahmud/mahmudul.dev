@@ -12,8 +12,8 @@ const {
 
 <li class={`${depth > 2 ? "ml-4" : ""}`}>
 	<a
-		class={`block py-1 px-2 rounded-lg text-slate-300 hover:text-indigo-300 hover:bg-white/5 transition-all duration-200 ${
-			depth <= 2 ? "font-medium" : "text-sm text-slate-400"
+		class={`block py-1 px-2 rounded-lg text-slate-300 hover:text-indigo-300 hover:bg-white/5 transition-all duration-200 text-xs ${
+			depth <= 2 ? "font-medium" : "text-slate-400"
 		}`}
 		href={`#${slug}`}
 		aria-label={`Scroll to section: ${text}`}>{text}</a
