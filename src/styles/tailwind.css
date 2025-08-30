@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @layer base {
   html {
@@ -12,30 +14,6 @@
 }
 @tailwind components;
 @tailwind utilities;
-
-@font-face {
-  font-family: 'Iosevka';
-  src: url('/fonts/iosevka.ttf') format('ttf');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Inter';
-  src: url('/fonts/inter.ttf') format('ttf');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('/fonts/JetBrainsMono-Bold.ttf') format('ttf');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
 
 :root {
   color-scheme: dark;
@@ -179,11 +157,14 @@ hr {
 
 pre {
   @apply !px-0 rounded-2xl bg-black overflow-x-auto max-w-full;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Iosevka', Consolas, monospace;
+  font-feature-settings: 'liga' 1, 'calt' 1;
 }
 
 code {
   @apply !text-xs sm:!text-sm !leading-loose md:!leading-loose;
-  font-family: 'JetBrains Mono', 'Iosevka', 'Fira Code', Consolas, monospace;
+  font-family: 'Fira Code', 'JetBrains Mono', 'Iosevka', Consolas, monospace;
+  font-feature-settings: 'liga' 1, 'calt' 1;
 }
 
 pre > code {

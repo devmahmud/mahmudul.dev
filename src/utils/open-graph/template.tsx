@@ -14,7 +14,7 @@ export const OpenGraphTemplate = ({ title, description, date }: OgData) => (
       height: '100%',
       width: '100%',
       padding: '10px 20px',
-      fontFamily: 'JetBrainsMono-Bold, monospace, Noto Sans JP, sans-serif',
+      fontFamily: 'JetBrainsMono, monospace, Noto Sans JP, sans-serif',
       fontSize: 28,
       backgroundColor: 'rgb(10 10 10)',
     }}

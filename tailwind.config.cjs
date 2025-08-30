@@ -28,13 +28,13 @@ module.exports = {
           ...defaultTheme.fontFamily.sans,
         ],
         mono: [
+          'Fira Code',
           'JetBrains Mono',
           'Iosevka',
-          'Fira Code',
           'Consolas',
           ...defaultTheme.fontFamily.mono,
         ],
-        iosevka: ['Iosevka', ...defaultTheme.fontFamily.mono],
+        'fira-code': ['Fira Code', ...defaultTheme.fontFamily.mono],
       },
       colors: {
         primary: {
