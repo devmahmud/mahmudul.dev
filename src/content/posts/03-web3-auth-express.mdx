@@ -1,0 +1,223 @@
+---
+title: "Implementing Web3 Wallet Authentication in Express.js"
+publishedAt: 2025-09-01
+description: "A comprehensive guide to implementing secure wallet-based authentication using Ethereum signatures in Express.js applications, with real-world use cases and security considerations"
+slug: "web3-auth-express"
+cover: "src/assets/posts/03/cover.jpg"
+coverAlt: "The logo of Implementing Web3 Wallet Authentication in Express.js"
+ogImage: "/og-posts/03/cover.jpg"
+tags: ["web3", "authentication", "express", "ethereum", "blockchain", "nodejs", "security"]
+---
+
+# Implementing Web3 Wallet Authentication in Express.js
+
+Authentication has always been the gateway to apps — from logging into Facebook with an email/password to OAuth with Google. In **Web3 apps (dApps)**, we can skip passwords entirely.  
+
+Instead, users authenticate by **signing a message with their crypto wallet**. This approach, standardized by **Sign-In with Ethereum (SIWE, EIP-4361)**, is passwordless, secure, and native to Web3.  
+
+---
+
+## Why Wallet Authentication?
+
+Real-world scenarios where wallet login shines:
+- **DeFi dashboards** — users sign in to track their assets.
+- **NFT marketplaces** — no signup needed, just connect and trade.
+- **Crowdfunding dApps** — backers pledge directly from their wallet.
+
+Benefits:
+- 🚀 **No password fatigue** — wallet is the identity.
+- 🔒 **Security built-in** — ownership proven by private key.
+- ⚡ **Frictionless onboarding** — no signup forms.
+- 🌐 **Web3-native** — interoperable across dApps.
+
+---
+
+## How the Flow Works (SIWE)
+
+1. **Server generates a nonce** (short-lived, one-time).
+2. **User signs a SIWE message** containing:
+   - Domain, URI, chainId
+   - Address
+   - Nonce
+   - Statement (human-readable)
+3. **Client sends `{ message, signature }`**.
+4. **Server verifies**:
+   - Domain/URI/chain binding
+   - Nonce matches and not expired
+   - Signature recovers the claimed address
+5. **Nonce cleared** → issue **JWT/session**.
+
+---
+
+## Database Schema (Prisma Example)
+
+```prisma
+model User {
+  id              String   @id @default(uuid())
+  wallet          String   @unique
+  nonce           String?
+  nonceExpiresAt  DateTime?
+}
+````
+
+---
+
+## Express.js Implementation
+
+### Request Nonce
+
+```ts
+import { randomBytes } from "crypto";
+
+router.post("/auth/request-nonce", async (req, res) => {
+  const { address } = req.body;
+  const nonce = "0x" + randomBytes(16).toString("hex");
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+  await db.user.upsert({
+    where: { wallet: address.toLowerCase() },
+    update: { nonce, nonceExpiresAt: expiresAt },
+    create: { wallet: address.toLowerCase(), nonce, nonceExpiresAt: expiresAt },
+  });
+
+  res.json({ nonce, expiresAt: expiresAt.toISOString() });
+});
+```
+
+### Verify Signature
+
+```ts
+import { SiweMessage } from "siwe";
+import { ethers } from "ethers";
+import jwt from "jsonwebtoken";
+
+router.post("/auth/verify", async (req, res) => {
+  const { message, signature } = req.body;
+
+  const siwe = new SiweMessage(message);
+  const fields = await siwe.validate(signature);
+
+  // Validate binding
+  if (fields.domain !== process.env.APP_DOMAIN) return res.status(401).json({ error: "Invalid domain" });
+  if (fields.uri !== process.env.APP_ORIGIN) return res.status(401).json({ error: "Invalid URI" });
+  if (Number(fields.chainId) !== Number(process.env.CHAIN_ID)) return res.status(401).json({ error: "Invalid chainId" });
+
+  // Validate nonce
+  const user = await db.user.findUnique({ where: { wallet: fields.address.toLowerCase() } });
+  if (!user?.nonce || user.nonce !== fields.nonce) return res.status(401).json({ error: "Nonce mismatch" });
+  if (!user.nonceExpiresAt || user.nonceExpiresAt < new Date()) return res.status(401).json({ error: "Nonce expired" });
+
+  // Verify signature (EOA path)
+  const recovered = ethers.verifyMessage(siwe.toMessage(), signature);
+  if (recovered.toLowerCase() !== fields.address.toLowerCase()) return res.status(401).json({ error: "Signature failed" });
+
+  // Clear nonce
+  await db.user.update({
+    where: { wallet: fields.address.toLowerCase() },
+    data: { nonce: null, nonceExpiresAt: null },
+  });
+
+  // Issue JWT
+  const token = jwt.sign({ sub: fields.address.toLowerCase() }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+  res.json({ user: { wallet: fields.address }, token });
+});
+```
+
+---
+
+## Frontend Integration (MetaMask + ethers.js)
+
+```ts
+import { SiweMessage } from "siwe";
+import { ethers } from "ethers";
+
+async function signInWithEthereum() {
+  if (!window.ethereum) throw new Error("Wallet not found");
+
+  const provider = new ethers.BrowserProvider(window.ethereum);
+  const signer = await provider.getSigner();
+  const address = (await signer.getAddress()).toLowerCase();
+  const network = await provider.getNetwork();
+
+  // 1. Request nonce
+  const { nonce } = await fetch("/auth/request-nonce", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ address }),
+  }).then(res => res.json());
+
+  // 2. Build SIWE message
+  const siwe = new SiweMessage({
+    domain: window.location.host,
+    address,
+    statement: "Sign in to Example dApp.",
+    uri: window.location.origin,
+    version: "1",
+    chainId: Number(network.chainId),
+    nonce,
+    issuedAt: new Date().toISOString(),
+  });
+
+  const message = siwe.prepareMessage();
+
+  // 3. Sign
+  const signature = await signer.signMessage(message);
+
+  // 4. Verify with server
+  const result = await fetch("/auth/verify", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message, signature }),
+  }).then(res => res.json());
+
+  return result; // { user, token }
+}
+```
+
+---
+
+## Security Checklist ✅
+
+* Use **SIWE (EIP-4361)**, not static strings.
+* Validate **domain, URI, chainId**.
+* Use **short-lived, single-use nonces** (expire after 5–10 minutes).
+* **Clear nonce** after successful login.
+* **Rate limit** verification endpoint.
+* Handle **contract wallets (EIP-1271)** if targeting Safe/AA.
+* Enforce HTTPS, secure cookies if using sessions.
+* Provide a human-readable `statement` — never hide actions.
+
+---
+
+## When to Use Wallet Login?
+
+* ✅ dApps (NFTs, DAOs, DeFi)
+* ✅ Web3 SaaS tools needing passwordless onboarding
+* ✅ Cross-dApp authentication with one wallet
+* ❌ Traditional SaaS apps that need password recovery
+
+---
+
+## Takeaway
+
+Web3 wallet authentication is **passwordless, cryptographically secure, and user-friendly**.
+
+By implementing **SIWE (EIP-4361)** with nonces and proper validation, you can provide:
+
+* Safer onboarding
+* Seamless login
+* A Web3-native identity layer
+
+⚡ Next time you’re building a **crowdfunding dApp**, a **DeFi dashboard**, or an **NFT marketplace**, skip passwords. A wallet signature is all your users need.
+
+---
+
+## References & Further Reading
+
+* [EIP-4361: Sign-In with Ethereum](https://eips.ethereum.org/EIPS/eip-4361)
+* [SIWE (Sign-In with Ethereum) Docs](https://login.xyz/)
+* [Ethers.js Documentation](https://docs.ethers.org/)
+* [Ethereum.org Developer Portal](https://ethereum.org/developers/)
+* [Express.js Security Best Practices](https://expressjs.com/en/advanced/best-practices-security.html)
+* [EIP-1271: Standard Signature Validation Method](https://eips.ethereum.org/EIPS/eip-1271)
