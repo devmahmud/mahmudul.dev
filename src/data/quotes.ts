@@ -6,7 +6,9 @@ type Quote = {
 };
 
 export function getRandomQuote(): Quote {
-  const randomIndex = Math.floor(Math.random() * quotes.length);
+  const array = new Uint32Array(1);
+  crypto.getRandomValues(array);
+  const randomIndex = array[0] % quotes.length;
   return quotes[randomIndex];
 }
 
