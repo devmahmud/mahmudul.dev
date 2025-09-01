@@ -33,7 +33,7 @@ export async function getStaticPaths() {
 }
 
 const {
-  data: { title, publishedAt, description, cover, coverAlt },
+  data: { title, publishedAt, description, cover, coverAlt, tags = [] },
   render,
   slug,
 } = Astro.props;
@@ -63,7 +63,7 @@ const og = {
     publishedTime: new Date(publishedAt).toISOString(),
     modifiedTime: (Astro.props.data.updatedAt && new Date(Astro.props.data.updatedAt).toISOString()) || undefined,
     author: "Mahmudul Alam",
-    tags: [],
+    tags: tags,
   }}
 >
   <div class="flex gap-8 items-start">

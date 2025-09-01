@@ -1,7 +1,7 @@
-import { defineCollection, z } from "astro:content";
+import { defineCollection, z } from 'astro:content';
 
 const posts = defineCollection({
-  type: "content",
+  type: 'content',
   schema: ({ image }) =>
     z.object({
       cover: image().optional(),
@@ -16,15 +16,16 @@ const posts = defineCollection({
       orderInSeries: z.number().optional(),
       isDraft: z.boolean().default(false),
 
-      from: z.string().optional().default("gray-100"),
-      to: z.string().optional().default("gray-800"),
+      from: z.string().optional().default('gray-100'),
+      to: z.string().optional().default('gray-800'),
 
       planned: z.boolean().optional().default(false),
+      tags: z.array(z.string()).default([]),
     }),
 });
 
 const tils = defineCollection({
-  type: "content",
+  type: 'content',
   schema: z.object({
     title: z.string(),
     tags: z.array(z.string()),
