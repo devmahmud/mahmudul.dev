@@ -5,6 +5,7 @@ import Layout from '@/layouts/Layout.astro';
 import SocialLinks from '@/components/SocialLinks.astro';
 import FeaturedPostCard from '@/components/post/FeaturedPostCard.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
+import QuoteCard from '@/components/QuoteCard.astro';
 import Link from '@/components/shared/Link.astro';
 import convertAsteriskToStrongTag from '@/utils/convertAsteriskToStrongTag';
 
@@ -23,7 +24,7 @@ const plannedPosts = allPosts
 ---
 
 <Layout title="Mahmudul Alam">
-  <main class="space-y-32">
+  <main class="space-y-24">
     <!-- Hero Section -->
     <section class="relative space-y-12" aria-labelledby="hero-heading">
       <!-- Hero background glow -->
@@ -53,7 +54,13 @@ const plannedPosts = allPosts
           </div>
         </div>
       </div>
+
+    <!-- Quote Line -->
+    <QuoteCard />
+
     </section>
+
+  
 
     <!-- Projects Section -->
     <section class="relative space-y-12" aria-labelledby="projects-heading">
