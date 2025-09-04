@@ -183,19 +183,3 @@ div[data-rehype-pretty-code-fragment] code {
 .post table {
   @apply table-auto;
 }
-
-/* Light mode overrides for inline code */
-html:not(.dark) .post code {
-  @apply bg-zinc-100 text-zinc-800;
-}
-
-/* Light mode overrides for code blocks */
-html:not(.dark) .post pre,
-html:not(.dark) div[data-rehype-pretty-code-fragment] pre {
-  @apply bg-zinc-100;
-}
-
-html:not(.dark) div[data-rehype-pretty-code-fragment] pre code,
-html:not(.dark) .post pre code {
-  @apply text-zinc-800;
-}
