@@ -1,4 +1,3 @@
-import fs from 'fs';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
@@ -17,7 +16,7 @@ import partytown from '@astrojs/partytown';
 
 const prettyCodeOptions: PrettyCodeOptions = {
   keepBackground: false,
-  theme: JSON.parse(fs.readFileSync('./src/data/md-themes/moonlight.json', 'utf8')),
+  theme: 'one-dark-pro',
   transformers: [
     transformerCopyButton({
       visibility: 'hover',
@@ -45,7 +44,7 @@ export default defineConfig({
   ],
   markdown: {
     syntaxHighlight: false,
-    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeTableWrapper],
+    rehypePlugins: [[rehypePrettyCode, prettyCodeOptions], rehypeTableWrapper as any],
     remarkPlugins: [remarkReadingTime],
   },
   output: 'server',

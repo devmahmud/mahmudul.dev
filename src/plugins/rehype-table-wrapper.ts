@@ -1,34 +1,33 @@
-import type { Plugin } from 'unified';
 import type { Root, Element } from 'hast';
+import { visit } from 'unist-util-visit';
 
-const rehypeTableWrapper: Plugin = () => {
-  return (tree) => {
-    const visit = (node: any) => {
-      if (node.type === 'element' && node.tagName === 'table') {
-        // Create wrapper div
-        const wrapper: Element = {
-          type: 'element',
-          tagName: 'div',
-          properties: {
-            className:
-              'table-wrapper overflow-x-auto max-w-full my-6 rounded-lg border border-zinc-700',
-          },
-          children: [node],
-        };
+function rehypeTableWrapper() {
+  return (tree: Root) => {
+    visit(tree, 'element', (node, index, parent) => {
+      if (!parent || typeof index !== 'number') return;
+      const el = node as Element;
+      if (el.tagName !== 'table') return;
 
-        // Replace the table with the wrapper
-        return wrapper;
-      }
+      const wrapper: Element = {
+        type: 'element',
+        tagName: 'div',
+        properties: {
+          className: [
+            'table-wrapper',
+            'overflow-x-auto',
+            'max-w-full',
+            'my-6',
+            'rounded-lg',
+            'border',
+            'border-zinc-700',
+          ],
+        },
+        children: [el],
+      };
 
-      if (node.children) {
-        node.children = node.children.map(visit);
-      }
-
-      return node;
-    };
-
-    visit(tree);
+      (parent.children as Element[])[index] = wrapper;
+    });
   };
-};
+}
 
 export default rehypeTableWrapper;

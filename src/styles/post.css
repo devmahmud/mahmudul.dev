@@ -12,6 +12,31 @@
   @apply whitespace-normal;
 }
 
+/* Inline code in headings should match heading font size */
+.post h1 code {
+  @apply !text-2xl sm:!text-3xl md:!text-4xl;
+}
+
+.post h2 code {
+  @apply !text-xl sm:!text-2xl md:!text-3xl;
+}
+
+.post h3 code {
+  @apply !text-lg sm:!text-xl md:!text-2xl;
+}
+
+.post h4 code {
+  @apply !text-base sm:!text-lg md:!text-xl;
+}
+
+.post h5 code {
+  @apply !text-sm sm:!text-base md:!text-lg;
+}
+
+.post h6 code {
+  @apply !text-xs sm:!text-sm md:!text-base;
+}
+
 .post h1 {
   @apply mt-8 text-2xl font-bold leading-tight sm:text-3xl md:text-4xl;
 }
@@ -157,4 +182,20 @@ div[data-rehype-pretty-code-fragment] code {
 /* Ensure table doesn't break page layout */
 .post table {
   @apply table-auto;
+}
+
+/* Light mode overrides for inline code */
+html:not(.dark) .post code {
+  @apply bg-zinc-100 text-zinc-800;
+}
+
+/* Light mode overrides for code blocks */
+html:not(.dark) .post pre,
+html:not(.dark) div[data-rehype-pretty-code-fragment] pre {
+  @apply bg-zinc-100;
+}
+
+html:not(.dark) div[data-rehype-pretty-code-fragment] pre code,
+html:not(.dark) .post pre code {
+  @apply text-zinc-800;
 }
