@@ -1,0 +1,175 @@
+---
+title: "Promise Methods Playbook"
+publishedAt: 2025-09-04
+description: "A fun, practical guide to JavaScript promise methods — all, allSettled, race, any, resolve/reject, and finally — with examples you'll actually use."
+slug: "promise-methods-playbook"
+cover: "src/assets/posts/09/cover.jpg"
+coverAlt: "The logo of Promise Methods Playbook"
+ogImage: "/og-posts/09/cover.jpg"
+tags: ["javascript", "async", "promises", "webdev", "frontend"]
+---
+
+# Promise Methods Playbook
+
+> “Async without a plan is just waiting with extra steps.”
+
+Modern applications often juggle multiple async tasks: fetching resources, uploading files, coordinating services. **Promise methods** help you orchestrate that work clearly and predictably. Here’s a practical tour with examples and when to use each one.
+
+---
+
+## `Promise.all()` — *Wait for everything or fail fast*
+
+Resolves when *all* promises succeed, rejects immediately if any fail.
+
+```js
+const userReq = fetch('/api/user');
+const postsReq = fetch('/api/posts');
+const commentsReq = fetch('/api/comments');
+
+Promise.all([userReq, postsReq, commentsReq])
+  .then(async ([u, p, c]) => {
+    const [user, posts, comments] = await Promise.all([
+      u.json(),
+      p.json(),
+      c.json(),
+    ]);
+    console.log({ user, posts, comments });
+  })
+  .catch(err => {
+    console.error("Something went wrong:", err);
+  });
+````
+
+**Use it for:** scenarios where **all data is required** (e.g., rendering a dashboard).
+
+---
+
+## `Promise.allSettled()` — *Get a full report*
+
+Waits for all promises, regardless of success or failure. Returns `{ status, value | reason }` for each.
+
+```js
+const uploads = [
+  uploadFile(fileA),
+  uploadFile(fileB),
+  uploadFile(fileC),
+];
+
+const results = await Promise.allSettled(uploads);
+
+results.forEach(result => {
+  if (result.status === "fulfilled") {
+    console.log("Uploaded:", result.value);
+  } else {
+    console.warn("Failed:", result.reason);
+  }
+});
+```
+
+**Use it for:** bulk operations where partial success is acceptable (emails, file uploads, notifications).
+
+---
+
+## `Promise.race()` — *First to settle wins*
+
+Settles as soon as the first promise resolves or rejects. Handy for enforcing timeouts.
+
+```js
+function withTimeout(promise, ms) {
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error("Timeout exceeded")), ms)
+  );
+
+  return Promise.race([promise, timeout]);
+}
+
+try {
+  const response = await withTimeout(fetch("/api/slow"), 2000);
+  const data = await response.json();
+  console.log(data);
+} catch (err) {
+  console.error(err.message);
+}
+```
+
+**Use it for:** **deadline enforcement**, e.g., API requests that must complete within 2s.
+
+---
+
+## `Promise.any()` — *First success wins*
+
+Resolves as soon as one promise fulfills. Ignores rejections, fails only if *all* fail.
+
+```js
+const mirrors = [
+  fetch("https://cdn1.example.com/data"),
+  fetch("https://cdn2.example.com/data"),
+  fetch("https://cdn3.example.com/data"),
+];
+
+try {
+  const fastest = await Promise.any(mirrors);
+  const data = await fastest.json();
+  console.log("Loaded from:", fastest.url);
+} catch (err) {
+  console.error("All sources failed:", err);
+}
+```
+
+**Use it for:** high-availability strategies (multiple servers, CDNs, fallback APIs).
+
+---
+
+## `Promise.resolve()` / `Promise.reject()` — *Instant promises*
+
+Creates a promise that is immediately resolved or rejected.
+
+```js
+const value = await Promise.resolve(42);
+console.log(value); // 42
+
+Promise.reject(new Error("Boom"))
+  .catch(err => console.error("Caught:", err.message));
+```
+
+**Use it for:** wrapping synchronous values in async flows, testing async functions, or mocking APIs.
+
+---
+
+## `.finally()` — *Always clean up*
+
+Runs whether the promise resolves or rejects.
+
+```js
+setLoading(true);
+
+fetch("/api/data")
+  .then(res => res.json())
+  .then(data => useData(data))
+  .catch(err => showError(err))
+  .finally(() => setLoading(false));
+```
+
+**Use it for:** hiding loaders, closing DB connections, or releasing locks.
+
+---
+
+## Quick Cheatsheet
+
+* **all** → wait for **everything**; fail fast on one error
+* **allSettled** → get **all results**, success or failure
+* **race** → first settled wins (use with timeouts)
+* **any** → first successful wins (fault tolerant)
+* **resolve/reject** → create promises instantly
+* **finally** → cleanup runs regardless
+
+---
+
+## References
+
+* [MDN: Using Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises)
+* [MDN: Promise API](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+
+---
+
+Async gets easier when you pick the right method for the job. Keep this playbook handy, and let the runtime do the heavy lifting. 🚀
