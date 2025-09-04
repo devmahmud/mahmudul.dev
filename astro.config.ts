@@ -1,3 +1,4 @@
+import fs from 'fs';
 import tailwind from '@astrojs/tailwind';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
@@ -16,7 +17,7 @@ import partytown from '@astrojs/partytown';
 
 const prettyCodeOptions: PrettyCodeOptions = {
   keepBackground: false,
-  theme: 'one-dark-pro',
+  theme: JSON.parse(fs.readFileSync('./src/data/md-themes/moonlight.json', 'utf8')),
   transformers: [
     transformerCopyButton({
       visibility: 'hover',
