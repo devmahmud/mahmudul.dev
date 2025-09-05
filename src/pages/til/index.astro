@@ -2,11 +2,18 @@
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import TilsLists from "@/components/til/TilList.astro";
+import Pagination from "@/components/shared/Pagination.astro";
+import { paginate, parsePageFromQuery, getPaginationInfo } from "@/utils/pagination";
 
-const tils = (await getCollection("tils"))
+const allTils = (await getCollection("tils"))
   // Order by newest, `data.publishedAt` is a Date object
   // @ts-ignore
-  .sort((a, b) => b.data.publishedAt - a.data.publishedAt)
+  .sort((a, b) => b.data.publishedAt - a.data.publishedAt);
+
+const currentPage = parsePageFromQuery(Astro.url);
+const paginationResult = paginate(allTils, { page: currentPage, itemsPerPage: 12 });
+const paginationInfo = getPaginationInfo(paginationResult);
+const tils = paginationResult.items;
 ---
 
 <Layout title="All tils">
@@ -24,6 +31,11 @@ const tils = (await getCollection("tils"))
         <p class="text-lg text-slate-300 max-w-2xl mx-auto">
           Quick insights and learnings from my daily development journey.
         </p>
+        {paginationResult.totalPages > 1 && (
+          <p class="text-sm text-slate-400">
+            Showing {paginationInfo.startItem}-{paginationInfo.endItem} of {paginationInfo.totalItems} TILs
+          </p>
+        )}
       </div>
     </section>
 
@@ -32,6 +44,11 @@ const tils = (await getCollection("tils"))
       <div class="absolute inset-0 bg-gradient-to-r from-violet-500/10 to-indigo-500/10 rounded-3xl blur-2xl"></div>
       <div class="relative">
         <TilsLists tils={tils} />
+        <Pagination 
+          currentPage={paginationResult.currentPage}
+          totalPages={paginationResult.totalPages}
+          baseUrl="/til"
+        />
       </div>
     </section>
   </div>

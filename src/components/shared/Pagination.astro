@@ -1,0 +1,117 @@
+---
+export interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+  showFirstLast?: boolean;
+  maxVisiblePages?: number;
+}
+
+const { 
+  currentPage, 
+  totalPages, 
+  baseUrl, 
+  showFirstLast = true,
+  maxVisiblePages = 5 
+} = Astro.props;
+
+// Don't render if there's only one page or no pages
+if (totalPages <= 1) {
+  return null;
+}
+
+// Calculate visible page range
+const halfVisible = Math.floor(maxVisiblePages / 2);
+let startPage = Math.max(1, currentPage - halfVisible);
+let endPage = Math.min(totalPages, currentPage + halfVisible);
+
+// Adjust if we're near the beginning or end
+if (endPage - startPage + 1 < maxVisiblePages) {
+  if (startPage === 1) {
+    endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+  } else {
+    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+  }
+}
+
+const getPageUrl = (page: number) => {
+  if (page === 1) {
+    return baseUrl;
+  }
+  return `${baseUrl}?page=${page}`;
+};
+
+const isCurrentPage = (page: number) => page === currentPage;
+---
+
+<nav class="flex items-center justify-center space-x-2 mt-12" aria-label="Pagination">
+  <!-- First page -->
+  {showFirstLast && currentPage > 2 && (
+    <a
+      href={getPageUrl(1)}
+      class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors duration-200"
+      aria-label="Go to first page"
+    >
+      First
+    </a>
+  )}
+
+  <!-- Previous page -->
+  {currentPage > 1 && (
+    <a
+      href={getPageUrl(currentPage - 1)}
+      class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors duration-200"
+      aria-label="Go to previous page"
+    >
+      ←
+    </a>
+  )}
+
+  <!-- Page numbers -->
+  {Array.from({ length: endPage - startPage + 1 }, (_, i) => {
+    const page = startPage + i;
+    return (
+      <a
+        href={getPageUrl(page)}
+        class={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+          isCurrentPage(page)
+            ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white'
+            : 'text-slate-300 hover:text-white hover:bg-slate-800'
+        }`}
+        aria-label={`Go to page ${page}`}
+        aria-current={isCurrentPage(page) ? 'page' : undefined}
+      >
+        {page}
+      </a>
+    );
+  })}
+
+  <!-- Next page -->
+  {currentPage < totalPages && (
+    <a
+      href={getPageUrl(currentPage + 1)}
+      class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors duration-200"
+      aria-label="Go to next page"
+    >
+      →
+    </a>
+  )}
+
+  <!-- Last page -->
+  {showFirstLast && currentPage < totalPages - 1 && (
+    <a
+      href={getPageUrl(totalPages)}
+      class="px-3 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 rounded-lg transition-colors duration-200"
+      aria-label="Go to last page"
+    >
+      Last
+    </a>
+  )}
+</nav>
+
+<!-- Page info -->
+<div class="text-center mt-4">
+  <p class="text-sm text-slate-400">
+    Page {currentPage} of {totalPages}
+  </p>
+</div>

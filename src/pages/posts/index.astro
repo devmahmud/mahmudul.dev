@@ -2,10 +2,17 @@
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import PostsLists from "@/components/post/PostsList.astro";
+import Pagination from "@/components/shared/Pagination.astro";
+import { paginate, parsePageFromQuery, getPaginationInfo } from "@/utils/pagination";
 
-const posts = (await getCollection("posts"))
+const allPosts = (await getCollection("posts"))
   .filter((post) => !post.data.planned)
   .sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime());
+
+const currentPage = parsePageFromQuery(Astro.url);
+const paginationResult = paginate(allPosts, { page: currentPage, itemsPerPage: 12 });
+const paginationInfo = getPaginationInfo(paginationResult);
+const posts = paginationResult.items;
 ---
 
 <Layout title="All Posts">
@@ -23,6 +30,11 @@ const posts = (await getCollection("posts"))
         <p class="text-lg text-slate-300 max-w-2xl mx-auto">
           Thoughts, tutorials, and insights from my journey in software development.
         </p>
+        {paginationResult.totalPages > 1 && (
+          <p class="text-sm text-slate-400">
+            Showing {paginationInfo.startItem}-{paginationInfo.endItem} of {paginationInfo.totalItems} posts
+          </p>
+        )}
       </div>
     </section>
 
@@ -31,6 +43,11 @@ const posts = (await getCollection("posts"))
       <div class="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-violet-500/10 rounded-3xl blur-2xl"></div>
       <div class="relative">
         <PostsLists posts={posts} />
+        <Pagination 
+          currentPage={paginationResult.currentPage}
+          totalPages={paginationResult.totalPages}
+          baseUrl="/posts"
+        />
       </div>
     </section>
   </div>
