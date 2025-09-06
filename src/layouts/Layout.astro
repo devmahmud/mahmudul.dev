@@ -1,5 +1,6 @@
 ---
 import Analytics from '@vercel/analytics/astro'
+import  SpeedInsights  from "@vercel/speed-insights/astro"
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOTags from '@/components/seo/SEOTags.astro';
@@ -57,6 +58,7 @@ const { title, og, article } = Astro.props;
     
     <ThemeProvider />
     <Analytics />
+    <SpeedInsights/>
     
     <style is:global>
       html {

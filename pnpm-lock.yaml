@@ -53,6 +53,9 @@ importers:
       '@vercel/kv':
         specifier: ^0.2.2
         version: 0.2.4
+      '@vercel/speed-insights':
+        specifier: ^1.2.0
+        version: 1.2.0(react@19.1.1)
       astro:
         specifier: ^5.13.3
         version: 5.13.3(@vercel/functions@2.2.13)(@vercel/kv@0.2.4)(jiti@1.21.6)(rollup@4.48.1)(sass@1.77.8)(typescript@5.5.4)(yaml@2.5.0)
@@ -1102,6 +1105,29 @@ packages:
 
   '@vercel/routing-utils@5.1.1':
     resolution: {integrity: sha512-EyOik06V2fPXAbKY087BM7DMOQOJK+9mubwwox1TkDi21tMeJcMYwsXwepm6ZmyZ5u0j1TpJW172fP4MbzaCcg==}
+
+  '@vercel/speed-insights@1.2.0':
+    resolution: {integrity: sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==}
+    peerDependencies:
+      '@sveltejs/kit': ^1 || ^2
+      next: '>= 13'
+      react: ^18 || ^19 || ^19.0.0-rc
+      svelte: '>= 4'
+      vue: ^3
+      vue-router: ^4
+    peerDependenciesMeta:
+      '@sveltejs/kit':
+        optional: true
+      next:
+        optional: true
+      react:
+        optional: true
+      svelte:
+        optional: true
+      vue:
+        optional: true
+      vue-router:
+        optional: true
 
   abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
@@ -4585,6 +4611,10 @@ snapshots:
       path-to-regexp-updated: path-to-regexp@6.3.0
     optionalDependencies:
       ajv: 6.12.6
+
+  '@vercel/speed-insights@1.2.0(react@19.1.1)':
+    optionalDependencies:
+      react: 19.1.1
 
   abbrev@3.0.1: {}
 
