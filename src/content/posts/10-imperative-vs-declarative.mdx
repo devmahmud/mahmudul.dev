@@ -1,0 +1,280 @@
+---
+title: "Imperative vs Declarative in JavaScript/TypeScript"
+publishedAt: 2025-09-06
+description: "A fun and practical guide to understanding when to use imperative vs declarative approaches in JS/TS, with lots of real-world examples."
+slug: "imperative-vs-declarative"
+cover: "src/assets/posts/10/cover.jpg"
+coverAlt: "The logo of Imperative vs Declarative"
+ogImage: "/og-posts/10/cover.jpg"
+tags: ["javascript", "typescript", "imperative", "declarative", "programming", "best-practices"]
+---
+
+import Callout from '@/components/mdx/Callout.astro';
+
+# 🍳 Imperative vs Declarative in JavaScript/TypeScript
+
+When you tell your friend how to get to your house, you have two choices:
+
+- **Imperative style**: “Go straight, take the second left, then right after the tea shop, then climb the stairs…”
+- **Declarative style**: “Just follow Google Maps.”
+
+Both get the job done, but one micromanages every step, while the other simply declares the goal and lets the system figure it out.
+
+That's the essence of **imperative vs declarative programming**. And JavaScript/TypeScript let you dance between both worlds depending on the problem.
+
+Let's explore them with code, cooking metaphors, and **real-world use cases**.
+
+---
+
+## 🚦 What Do These Words Even Mean?
+
+- **Imperative = HOW**
+  You explain the *steps*. The computer follows instructions line by line.
+
+- **Declarative = WHAT**
+  You explain the *intent*. The computer decides the steps internally.
+
+Think of it like cooking:
+
+- Imperative → “Chop onions, heat oil, fry until golden.”
+- Declarative → “I want onion curry.”
+
+<Callout type="tip">
+**Tip:** Keep this analogy in mind when switching styles:
+**Imperative** = recipe instructions.
+**Declarative** = placing an order at a restaurant.
+</Callout>
+
+---
+
+## 🍕 First Taste: Arrays
+
+### Square numbers imperatively
+```ts
+const numbers = [1, 2, 3, 4];
+const squares: number[] = [];
+
+for (let i = 0; i < numbers.length; i++) {
+  squares.push(numbers[i] * numbers[i]);
+}
+````
+
+### Square numbers declaratively
+
+```ts
+const numbers = [1, 2, 3, 4];
+const squares = numbers.map(n => n * n);
+```
+
+<Callout type="note">
+👉 Declarative code reads like the **intention**, not the **mechanics**.
+</Callout>
+
+---
+
+## 🛠 Everyday Use Cases
+
+### 1. Filtering & Mapping Data
+
+**Imperative**
+
+```ts
+const evens: number[] = [];
+for (let n of [1, 2, 3, 4, 5]) {
+  if (n % 2 === 0) evens.push(n * 2);
+}
+```
+
+**Declarative**
+
+```ts
+const evens = [1, 2, 3, 4, 5]
+  .filter(n => n % 2 === 0)
+  .map(n => n * 2);
+```
+
+<Callout type="warning">
+**Watch out!** Chained methods (`filter → map → reduce`) are beautiful,  
+but chaining too much may hide performance issues.
+</Callout>
+
+---
+
+### 2. Async Workflows
+
+**Declarative (promise chain)**
+
+```ts
+fetch("/api/data")
+  .then(r => r.json())
+  .then(items => items.filter((x: any) => x.active))
+  .then(active => fetch("/api/save", {
+    method: "POST", body: JSON.stringify(active)
+  }))
+  .catch(console.error);
+```
+
+**Imperative (async/await)**
+
+```ts
+try {
+  const r = await fetch("/api/data");
+  const items = await r.json();
+  const active = items.filter((x: any) => x.active);
+  await fetch("/api/save", { method: "POST", body: JSON.stringify(active) });
+} catch (err) {
+  console.error(err);
+}
+```
+
+<Callout type="tip">
+**Rule of thumb:**  
+Use `async/await` (imperative) for retries, cancellation, and error handling.  
+Use promise chains (declarative) for lightweight data flows.
+</Callout>
+
+---
+
+### 3. DOM & UI Updates
+
+**Imperative DOM**
+
+```ts
+const button = document.createElement("button");
+button.textContent = "Click me";
+button.addEventListener("click", () => alert("Clicked!"));
+document.body.appendChild(button);
+```
+
+**Declarative React**
+
+```tsx
+function App() {
+  return <button onClick={() => alert("Clicked!")}>Click me</button>;
+}
+```
+
+<Callout type="note">
+UI frameworks like React, Vue, and Svelte are **declarative by design**.  
+They let you focus on *what UI should look like* instead of *how to build it*.
+</Callout>
+
+---
+
+### 4. Validation
+
+**Imperative**
+
+```ts
+function validateEmail(email: string) {
+  if (!email.includes("@")) return false;
+  return true;
+}
+```
+
+**Declarative**
+
+```ts
+import { z } from "zod";
+const schema = z.object({ email: z.string().email() });
+schema.parse({ email: "me@example.com" });
+```
+
+<Callout type="tip">
+**Pro Tip:** Declarative schemas (like Zod, Yup) make validation **scalable**.  
+Instead of scattering rules everywhere, you define them once and reuse.
+</Callout>
+
+---
+
+## 🎮 Fun Extra Examples
+
+### Timers (imperative is better)
+
+```ts
+let counter = 0;
+const id = setInterval(() => {
+  console.log("Tick", ++counter);
+  if (counter >= 5) clearInterval(id);
+}, 1000);
+```
+
+### Animations (declarative is better)
+
+```html
+<div class="box"></div>
+
+<style>
+.box { transition: transform 0.5s; }
+.box:hover { transform: scale(1.2); }
+</style>
+```
+
+### Game Loop (imperative is better)
+
+```ts
+let x = 0;
+function loop() {
+  x += 1;
+  draw(x);
+  requestAnimationFrame(loop);
+}
+loop();
+```
+
+### Data Queries (declarative is better)
+
+```ts
+const sales = orders
+  .filter(o => o.status === "paid")
+  .map(o => o.amount)
+  .reduce((a, b) => a + b, 0);
+```
+
+---
+
+## 📊 Pros & Cons
+
+|                  | Imperative 🍳             | Declarative 🍕                 |
+| ---------------- | ------------------------- | ------------------------------ |
+| **Readability**  | Verbose, low-level        | Clean, high-level              |
+| **Control**      | Full control over details | Abstracted away                |
+| **Performance**  | Tunable & optimized       | Usually “good enough”          |
+| **Maintainable** | Gets messy at scale       | Easier to reason about         |
+| **Learning**     | Intuitive for beginners   | Requires trust in abstractions |
+
+---
+
+## 🎯 Rules of Thumb
+
+* **Choose declarative** when:
+
+  * Code should express intent clearly.
+  * You’re in frameworks like React, Vue, RxJS.
+  * Business rules/configs need to be changed easily.
+
+* **Choose imperative** when:
+
+  * You need fine-grained control (timers, resources).
+  * Performance-critical loops matter.
+  * Abstractions don't fit edge cases.
+
+<Callout type="tip">
+**Remember:** Imperative = manual driving. Declarative = autopilot with GPS.  
+Both matter — the art is knowing *when to switch*.
+</Callout>
+
+---
+
+## 🏁 Key Takeaway
+
+Think of **imperative code** as *manual driving mode* and **declarative code** as *autopilot with GPS*.
+
+Both are essential. One gives you **control**; the other gives you **clarity**.
+
+The art of being a great developer is knowing **when to switch gears**.
+
+<Callout type="pro">
+Next time you write code, ask yourself:  
+Am I giving step-by-step driving directions, or just telling the system the destination?
+</Callout>
