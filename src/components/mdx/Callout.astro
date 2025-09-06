@@ -1,0 +1,58 @@
+---
+export interface Props {
+  type?: 'tip' | 'note' | 'warning' | 'pro' | 'info';
+}
+
+const { type = 'info' } = Astro.props;
+
+// Define styles for different callout types
+const calloutStyles = {
+  tip: {
+    container: 'bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800',
+    icon: '💡',
+    title: 'Tip',
+    textColor: 'text-blue-900 dark:text-blue-100'
+  },
+  note: {
+    container: 'bg-gray-50 border-gray-200 dark:bg-gray-900/20 dark:border-gray-700',
+    icon: '📝',
+    title: 'Note',
+    textColor: 'text-gray-900 dark:text-gray-100'
+  },
+  warning: {
+    container: 'bg-yellow-50 border-yellow-200 dark:bg-yellow-950/20 dark:border-yellow-800',
+    icon: '⚠️',
+    title: 'Warning',
+    textColor: 'text-yellow-900 dark:text-yellow-100'
+  },
+  pro: {
+    container: 'bg-purple-50 border-purple-200 dark:bg-purple-950/20 dark:border-purple-800',
+    icon: '⚡',
+    title: 'Pro Tip',
+    textColor: 'text-purple-900 dark:text-purple-100'
+  },
+  info: {
+    container: 'bg-indigo-50 border-indigo-200 dark:bg-indigo-950/20 dark:border-indigo-800',
+    icon: 'ℹ️',
+    title: 'Info',
+    textColor: 'text-indigo-900 dark:text-indigo-100'
+  }
+};
+
+const style = calloutStyles[type];
+---
+
+<div class={`my-6 rounded-lg border-l-4 border p-4 ${style.container}`}>
+  <div class="flex items-start">
+    <div class="flex-shrink-0 mr-3">
+      <span class="text-lg" role="img" aria-label={`${style.title} icon`}>
+        {style.icon}
+      </span>
+    </div>
+    <div class={`flex-1 ${style.textColor}`}>
+      <div class="prose prose-sm max-w-none dark:prose-invert">
+        <slot />
+      </div>
+    </div>
+  </div>
+</div>
