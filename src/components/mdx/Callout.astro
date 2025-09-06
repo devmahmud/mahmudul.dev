@@ -11,31 +11,31 @@ const calloutStyles = {
     container: 'my-6 rounded-lg border-l-4 border p-4 bg-blue-950 border-blue-800',
     icon: '💡',
     title: 'Tip',
-    textColor: 'flex-1 text-blue-100'
+    textColor: 'text-blue-100'
   },
   note: {
     container: 'my-6 rounded-lg border-l-4 border p-4 bg-gray-900 border-gray-700',
     icon: '📝',
     title: 'Note',
-    textColor: 'flex-1 text-gray-100'
+    textColor: 'text-gray-100'
   },
   warning: {
     container: 'my-6 rounded-lg border-l-4 border p-4 bg-yellow-950 border-yellow-800',
     icon: '⚠️',
     title: 'Warning',
-    textColor: 'flex-1 text-yellow-100'
+    textColor: 'text-yellow-100'
   },
   pro: {
     container: 'my-6 rounded-lg border-l-4 border p-4 bg-purple-950 border-purple-800',
     icon: '⚡',
     title: 'Pro Tip',
-    textColor: 'flex-1 text-purple-100'
+    textColor: 'text-purple-100'
   },
   info: {
     container: 'my-6 rounded-lg border-l-4 border p-4 bg-indigo-950 border-indigo-800',
     icon: 'ℹ️',
     title: 'Info',
-    textColor: 'flex-1 text-indigo-100'
+    textColor: 'text-indigo-100'
   }
 };
 
@@ -48,8 +48,8 @@ const style = calloutStyles[type];
         {style.icon}
       </span>
     </div>
-    <div class={style.textColor}>
-      <div class="prose prose-sm max-w-none dark:prose-invert">
+    <div class="flex-1">
+      <div class={`prose prose-sm max-w-none dark:prose-invert ${style.textColor} [&_*]:!text-current [&_p]:!text-current [&_strong]:!text-current [&_em]:!text-current [&_code]:!text-current`}>
         <slot />
       </div>
     </div>
