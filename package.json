@@ -28,6 +28,7 @@
     "@iconify/icons-tabler": "^1.2.84",
     "@rehype-pretty/transformers": "^0.13.2",
     "@tailwindcss/typography": "^0.5.9",
+    "@vercel/analytics": "^1.5.0",
     "@vercel/kv": "^0.2.2",
     "astro": "^5.13.3",
     "astro-seo": "0.7.2",
