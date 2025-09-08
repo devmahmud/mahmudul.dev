@@ -149,6 +149,7 @@ const articleLd = (og?.type === 'article' || article)
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "generator", content: Astro.generator },
         ...(keywords.length ? [{ name: "keywords", content: keywords.join(", ") }] : []),
+        { property: "og:description", content: openGraph.description },
         {
           name: "twitter:image",
           content: openGraph.image || new URL('/opengraph-image.png', DEFAULT_URL_SITE).toString(),
