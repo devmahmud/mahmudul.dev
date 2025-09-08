@@ -1,7 +1,6 @@
 ---
 import { SEO } from "astro-seo";
 import { SITE_URL } from "@/data/config";
-import Analytics from "./analytics.astro";
 
 type Props = {
   title?: string;
@@ -55,6 +54,12 @@ const openGraph = {
   url: currentUrl,
   description: og?.description || description || DEFAULT_DESCRIPTION_PAGE,
 };
+
+// Compute SEO-safe title (<= 65 chars) for <title> and Twitter
+const pageTitle = og?.title || title || DEFAULT_TITLE_PAGE;
+const seoTitle = pageTitle.length > 65
+  ? pageTitle.slice(0, 62).trimEnd() + '…'
+  : pageTitle;
 
 const websiteLd = {
   '@context': 'https://schema.org',
@@ -120,7 +125,7 @@ const articleLd = (og?.type === 'article' || article)
 <head>
   <SEO
     charset="UTF-8"
-    title={openGraph.title}
+    title={seoTitle}
     description={openGraph.description}
     noindex={noindex || false}
     openGraph={{
@@ -139,15 +144,28 @@ const articleLd = (og?.type === 'article' || article)
     extend={{
       link: [
         { rel: "icon", href: "/favicon.ico" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "manifest", href: "/site.webmanifest" },
+        // Optional direct references for Android Chrome (files should exist in public/)
+        { rel: "icon", type: "image/png", href: "/android-chrome-192x192.png" },
+        { rel: "icon", type: "image/png", href: "/android-chrome-512x512.png" },
         { rel: "sitemap", href: "/sitemap-index.xml" },
         { rel: "canonical", href: currentUrl },
         { rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/rss.xml" },
+        // Preload self-hosted fonts to minimize render-blocking
+        { rel: "preload", href: "/fonts/inter.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
+        { rel: "preload", href: "/fonts/iosevka.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
+        { rel: "preload", href: "/fonts/JetBrainsMono-Bold.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
+        { rel: "preload", href: "/fonts/NotoSansJP-Bold.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
         ...extraLinks,
       ],
       meta: [
         { property: "og:site_name", content: "Mahmudul Alam" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "generator", content: Astro.generator },
+        { name: "theme-color", content: "#000000" },
+        { name: "apple-mobile-web-app-capable", content: "yes" },
+        { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
         ...(keywords.length ? [{ name: "keywords", content: keywords.join(", ") }] : []),
         { property: "og:description", content: openGraph.description },
         {
@@ -155,7 +173,7 @@ const articleLd = (og?.type === 'article' || article)
           content: openGraph.image || new URL('/opengraph-image.png', DEFAULT_URL_SITE).toString(),
         },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: openGraph.title },
+        { name: "twitter:title", content: seoTitle },
         { name: "twitter:description", content: openGraph.description },
         { name: "twitter:site", content: "@mahmudul__alam" },
         { property: "og:url", content: currentUrl },
@@ -189,6 +207,5 @@ const articleLd = (og?.type === 'article' || article)
   {articleLd && (
     <script type="application/ld+json" set:html={JSON.stringify(articleLd)}></script>
   )}
-  
-  <Analytics />
+
 </head>
