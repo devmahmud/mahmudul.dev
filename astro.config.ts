@@ -4,7 +4,7 @@ import sitemap, { type SitemapItem, ChangeFreqEnum } from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import prefetch from '@astrojs/prefetch';
 import preact from '@astrojs/preact';
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
 import { defineConfig } from 'astro/config';
 import { rehypePrettyCode } from 'rehype-pretty-code';
 import { transformerCopyButton } from '@rehype-pretty/transformers';
@@ -46,11 +46,11 @@ export default defineConfig({
       },
       customPages: [
         // Add important hierarchical pages that may not be discovered otherwise
-        '/posts',
-        '/planned',
-        '/til',
-        '/series',
-        '/resume',
+        new URL('/posts', SITE_URL).toString(),
+        new URL('/planned', SITE_URL).toString(),
+        new URL('/til', SITE_URL).toString(),
+        new URL('/series', SITE_URL).toString(),
+        new URL('/resume', SITE_URL).toString(),
       ],
       serialize: (item: SitemapItem) => {
         // Hint hierarchy via changefreq/priority
