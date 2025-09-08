@@ -4,6 +4,7 @@ import  SpeedInsights  from "@vercel/speed-insights/astro"
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOTags from '@/components/seo/SEOTags.astro';
+import { ViewTransitions } from 'astro:transitions';
 
 import '@fontsource/open-sans';
 import '@/styles/tailwind.css';
@@ -41,6 +42,7 @@ const { title, description, keywords, og, article, noindex, extraLinks = [], ext
   <SEOTags title={title} description={description} keywords={keywords} og={og} article={article} />
 
   <body class="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 antialiased overflow-x-hidden">
+    <ViewTransitions />
     <!-- Content wrapper with flexbox for sticky footer -->
     <div class="relative z-10 min-h-screen flex flex-col">
       <!-- Header -->
@@ -51,7 +53,7 @@ const { title, description, keywords, og, article, noindex, extraLinks = [], ext
       </div>
       
       <!-- Main content - flex-grow to push footer down -->
-      <main class="relative flex-grow">
+      <main class="relative flex-grow" transition:name="page">
         <div class="mx-auto w-full max-w-7xl px-4 lg:py-8 sm:px-6 lg:px-8">
           <slot />
         </div>
