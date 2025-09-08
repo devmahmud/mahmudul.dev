@@ -12,6 +12,9 @@ import ThemeProvider from '@/components/ThemeProvider.astro';
 
 export interface Props {
   title?: string;
+  noindex?: boolean;
+  extraLinks?: { rel: string; href: string; type?: string; title?: string }[];
+  extraMeta?: Record<string, string>[];
   og?: {
     title?: string;
     type?: string;
@@ -28,7 +31,7 @@ export interface Props {
   };
 }
 
-const { title, og, article } = Astro.props;
+const { title, og, article, noindex, extraLinks = [], extraMeta = [] } = Astro.props;
 ---
 
 <!DOCTYPE html>

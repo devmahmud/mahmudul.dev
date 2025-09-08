@@ -26,6 +26,19 @@ const plannedPosts = allPosts
 <Layout title="Mahmudul Alam">
   <main class="space-y-24">
     <!-- Hero Section -->
+    {
+      /* Person JSON-LD for homepage */
+    }
+    <script type="application/ld+json" set:html={JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'Person',
+      name: 'Mahmudul Alam',
+      url: 'https://mahmudul.dev',
+      email: presentation.mail,
+      sameAs: presentation.socials?.map((s) => s.link).filter(Boolean) || [],
+      jobTitle: 'Senior Software Engineer',
+      description: presentation.description.replace(/<[^>]+>/g, ''),
+    })} />
     <section class="relative space-y-12" aria-labelledby="hero-heading">
       <!-- Hero background glow -->
       <div class="absolute inset-0 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-violet-500/20 rounded-3xl blur-3xl" aria-hidden="true"></div>

@@ -15,7 +15,13 @@ const paginationInfo = getPaginationInfo(paginationResult);
 const posts = paginationResult.items;
 ---
 
-<Layout title="All Posts">
+<Layout 
+  title="All Posts"
+  extraLinks={[
+    ...(paginationResult.currentPage > 1 ? [{ rel: 'prev', href: `/posts?page=${paginationResult.currentPage - 1}` }] : []),
+    ...(paginationResult.currentPage < paginationResult.totalPages ? [{ rel: 'next', href: `/posts?page=${paginationResult.currentPage + 1}` }] : []),
+  ]}
+>
   <div class="space-y-16 py-8">
     <!-- Page Header with gradient -->
     <section class="relative space-y-8">

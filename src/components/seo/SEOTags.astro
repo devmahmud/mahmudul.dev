@@ -1,7 +1,6 @@
 ---
 import { SEO } from "astro-seo";
 import { SITE_URL } from "@/data/config";
-import { ViewTransitions } from "astro:transitions";
 import Analytics from "./analytics.astro";
 
 type Props = {
@@ -22,23 +21,99 @@ type Props = {
     section?: string;
     tags?: string[];
   };
+  extraLinks?: { rel: string; href: string; type?: string; title?: string }[];
+  extraMeta?: Record<string, string>[];
 };
 
-const { title, description, noindex, og, article } = Astro.props;
+const { title, description, noindex, og, article, extraLinks = [], extraMeta = [] } = Astro.props;
 
 const DEFAULT_TITLE_PAGE = "Mahmudul Alam";
 const DEFAULT_DESCRIPTION_PAGE =
   "Senior Software Engineer from Bangladesh. I love to create technology and use it to make people's lives easier.";
 const DEFAULT_URL_SITE = SITE_URL;
 
+const absolutizeUrl = (input?: string): string | undefined => {
+  if (!input) return undefined;
+  try {
+    // If already absolute
+    const asUrl = new URL(input);
+    return asUrl.toString();
+  } catch {
+    // Relative path
+    return new URL(input, DEFAULT_URL_SITE).toString();
+  }
+};
+
+const currentUrl = new URL(Astro.url.pathname + Astro.url.search, DEFAULT_URL_SITE).toString();
+
 const openGraph = {
   title: og?.title || title || DEFAULT_TITLE_PAGE,
   type: og?.type || "website",
-  image: og?.image || "/opengraph-image.png",
+  image: absolutizeUrl(og?.image || "/opengraph-image.png"),
   alt: og?.alt || "Mahmudul Alam",
-  url: DEFAULT_URL_SITE,
+  url: currentUrl,
   description: og?.description || description || DEFAULT_DESCRIPTION_PAGE,
 };
+
+const websiteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'Mahmudul Alam',
+  url: DEFAULT_URL_SITE,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${DEFAULT_URL_SITE}/posts?query={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const breadcrumbItems = Astro.url.pathname
+  .split('/')
+  .filter(Boolean)
+  .map((segment, index, arr) => {
+    const position = index + 1;
+    const itemUrl = new URL('/' + arr.slice(0, index + 1).join('/'), DEFAULT_URL_SITE).toString();
+    const name = segment.replace(/[-_]/g, ' ');
+    return {
+      '@type': 'ListItem',
+      position,
+      name,
+      item: itemUrl,
+    };
+  });
+
+const webPageLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: currentUrl,
+  name: openGraph.title,
+  description: openGraph.description,
+  breadcrumb: breadcrumbItems.length
+    ? {
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbItems,
+      }
+    : undefined,
+};
+
+const articleLd = (og?.type === 'article' || article)
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: openGraph.title,
+      description: openGraph.description,
+      datePublished: article?.publishedTime,
+      dateModified: article?.modifiedTime || article?.publishedTime,
+      author: article?.author
+        ? { '@type': 'Person', name: article.author }
+        : undefined,
+      mainEntityOfPage: {
+        '@type': 'WebPage',
+        '@id': currentUrl,
+      },
+      image: openGraph.image ? [openGraph.image] : undefined,
+    }
+  : undefined;
 ---
 
 <head>
@@ -51,19 +126,22 @@ const openGraph = {
       basic: {
         title: openGraph.title,
         type: openGraph.type,
-        image: openGraph.image,
+        image: openGraph.image || new URL('/opengraph-image.png', DEFAULT_URL_SITE).toString(),
       },
       image: {
         alt: openGraph.alt,
       },
     }}
     twitter={{
-      creator: "@db_regret",
+      creator: "@mahmudul__alam",
     }}
     extend={{
       link: [
         { rel: "icon", href: "/favicon.ico" },
         { rel: "sitemap", href: "/sitemap-index.xml" },
+        { rel: "canonical", href: currentUrl },
+        { rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/rss.xml" },
+        ...extraLinks,
       ],
       meta: [
         { property: "og:site_name", content: "Mahmudul Alam" },
@@ -71,12 +149,13 @@ const openGraph = {
         { name: "generator", content: Astro.generator },
         {
           name: "twitter:image",
-          content: openGraph.image,
+          content: openGraph.image || new URL('/opengraph-image.png', DEFAULT_URL_SITE).toString(),
         },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: openGraph.title },
         { name: "twitter:description", content: openGraph.description },
-        { name: "twitter:site", content: "@db_regret" },
+        { name: "twitter:site", content: "@mahmudul__alam" },
+        { property: "og:url", content: currentUrl },
         { property: "og:image:width", content: "1200" },
         { property: "og:image:height", content: "630" },
         ...(article?.author ? [{ name: "author", content: article.author }] : []),
@@ -97,10 +176,16 @@ const openGraph = {
               ...((article?.tags || []).map((tag) => ({ property: "article:tag", content: tag }))),
             ]
           : []),
+        ...extraMeta,
       ],
     }}
   />
   <link rel="sitemap" href="/sitemap-index.xml" />
-  <ViewTransitions />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteLd)}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(webPageLd)}></script>
+  {articleLd && (
+    <script type="application/ld+json" set:html={JSON.stringify(articleLd)}></script>
+  )}
+  
   <Analytics />
 </head>
