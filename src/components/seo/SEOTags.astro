@@ -6,6 +6,7 @@ import Analytics from "./analytics.astro";
 type Props = {
   title?: string;
   description?: string;
+  keywords?: string[];
   noindex?: boolean;
   og?: {
     title?: string;
@@ -25,7 +26,7 @@ type Props = {
   extraMeta?: Record<string, string>[];
 };
 
-const { title, description, noindex, og, article, extraLinks = [], extraMeta = [] } = Astro.props;
+const { title, description, keywords = [], noindex, og, article, extraLinks = [], extraMeta = [] } = Astro.props;
 
 const DEFAULT_TITLE_PAGE = "Mahmudul Alam";
 const DEFAULT_DESCRIPTION_PAGE =
@@ -147,6 +148,7 @@ const articleLd = (og?.type === 'article' || article)
         { property: "og:site_name", content: "Mahmudul Alam" },
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "generator", content: Astro.generator },
+        ...(keywords.length ? [{ name: "keywords", content: keywords.join(", ") }] : []),
         {
           name: "twitter:image",
           content: openGraph.image || new URL('/opengraph-image.png', DEFAULT_URL_SITE).toString(),

@@ -12,6 +12,8 @@ import ThemeProvider from '@/components/ThemeProvider.astro';
 
 export interface Props {
   title?: string;
+  description?: string;
+  keywords?: string[];
   noindex?: boolean;
   extraLinks?: { rel: string; href: string; type?: string; title?: string }[];
   extraMeta?: Record<string, string>[];
@@ -31,12 +33,12 @@ export interface Props {
   };
 }
 
-const { title, og, article, noindex, extraLinks = [], extraMeta = [] } = Astro.props;
+const { title, description, keywords, og, article, noindex, extraLinks = [], extraMeta = [] } = Astro.props;
 ---
 
 <!DOCTYPE html>
 <html lang="en">
-  <SEOTags title={title} og={og} article={article} />
+  <SEOTags title={title} description={description} keywords={keywords} og={og} article={article} />
 
   <body class="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 antialiased overflow-x-hidden">
     <!-- Content wrapper with flexbox for sticky footer -->
