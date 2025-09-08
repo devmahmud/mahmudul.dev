@@ -146,17 +146,11 @@ const articleLd = (og?.type === 'article' || article)
         { rel: "icon", href: "/favicon.ico" },
         { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
         { rel: "manifest", href: "/site.webmanifest" },
-        // Optional direct references for Android Chrome (files should exist in public/)
         { rel: "icon", type: "image/png", href: "/android-chrome-192x192.png" },
         { rel: "icon", type: "image/png", href: "/android-chrome-512x512.png" },
         { rel: "sitemap", href: "/sitemap-index.xml" },
         { rel: "canonical", href: currentUrl },
         { rel: "alternate", type: "application/rss+xml", title: "RSS", href: "/rss.xml" },
-        // Preload self-hosted fonts to minimize render-blocking
-        { rel: "preload", href: "/fonts/inter.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
-        { rel: "preload", href: "/fonts/iosevka.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
-        { rel: "preload", href: "/fonts/JetBrainsMono-Bold.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
-        { rel: "preload", href: "/fonts/NotoSansJP-Bold.ttf", as: "font", type: "font/ttf", crossorigin: "anonymous" },
         ...extraLinks,
       ],
       meta: [
