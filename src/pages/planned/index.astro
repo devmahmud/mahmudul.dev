@@ -7,7 +7,7 @@ import { paginate, parsePageFromQuery, getPaginationInfo } from "@/utils/paginat
 
 const allPosts = (await getCollection("posts")).filter(
   (post) => post.data.planned
-);
+).sort((a, b) => new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime());
 
 const currentPage = parsePageFromQuery(Astro.url);
 const paginationResult = paginate(allPosts, { page: currentPage, itemsPerPage: 12 });
