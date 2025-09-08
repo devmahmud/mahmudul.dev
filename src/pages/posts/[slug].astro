@@ -58,6 +58,8 @@ const og = {
 
 <Layout
   title={title}
+  description={description}
+  keywords={tags}
   og={{ ...og, type: "article" }}
   article={{
     publishedTime: new Date(publishedAt).toISOString(),
@@ -67,7 +69,7 @@ const og = {
   }}
 >
   <div class="flex gap-8 items-start">
-    <main class="post min-w-prose flex-1 mx-auto flex w-full flex-col gap-4 max-w-4xl">
+    <section class="post min-w-prose flex-1 mx-auto flex w-full flex-col gap-4 max-w-4xl">
       <header>
         <h1
           class={"text-lg font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-800"}
@@ -108,7 +110,7 @@ const og = {
       </div>
       
       <CommentSection />
-    </main>
+    </section>
     {!!headings.length && <TOC headings={headings} />}
   </div>
 </Layout>

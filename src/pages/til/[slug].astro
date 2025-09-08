@@ -55,8 +55,8 @@ const og = {
 }
 ---
 
-<Layout title={title} og={og}>
-  <main class="post mx-auto flex w-full min-w-prose flex-col gap-4">
+<Layout title={title} description={`TIL: ${title}`} keywords={tags} og={og}>
+  <section class="post mx-auto flex w-full min-w-prose flex-col gap-4">
     <header>
       <h1 class="text-lg font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-br from-indigo-300 to-indigo-800">
         TIL: {title}
@@ -80,5 +80,5 @@ const og = {
     </div>
 
     <CommentSection />
-  </main>
+  </section>
 </Layout>

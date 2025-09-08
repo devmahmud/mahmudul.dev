@@ -7,8 +7,8 @@ const series = await getCollection("series");
 ---
 
 <Layout title="All series">
-  <main class="flex flex-col gap-8 slide-enter-content">
+  <section class="flex flex-col gap-8 slide-enter-content">
     <h1 class="text-2xl md:text-3xl text-neutral-100 font-sans leading-8">All Series</h1>
     <SeriesList series={series} />
-  </main>
+  </section>
 </Layout>
