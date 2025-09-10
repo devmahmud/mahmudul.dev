@@ -1,0 +1,194 @@
+---
+title: "Stop putting JWTs in localStorage: a fun, practical guide for frontend apps"
+publishedAt: 2025-09-10
+description: "A hands-on, example-packed guide to storing and refreshing JWTs safely in frontend apps: in-memory access tokens, HttpOnly refresh cookies, rotation, CORS/CSRF, and real code you can ship."
+slug: "secure-jwt-frontend"
+cover: "src/assets/posts/12/cover.jpg"
+coverAlt: "Cover illustration for JWT storage best practices in frontend apps"
+ogImage: "/og-posts/12/cover.jpg"
+tags: ["security", "jwt", "frontend", "web", "authentication"]
+---
+
+# 🍪 JWTs in the Frontend: Do's, Don'ts, and “Oh No!”s
+
+So you've got JWTs in your app. Great! But how and **where** you store them can be the difference between “🎉 Secure app” and “💀 Oops, we leaked tokens on Pastebin.”
+
+---
+
+## ❌ Don't: Put JWTs in `localStorage`
+
+```js
+// 🚨 BAD PRACTICE
+localStorage.setItem('token', accessToken);
+```
+
+* Why it's bad:
+
+  * XSS = game over. Any malicious script can `localStorage.getItem('token')`.
+  * Tokens persist across refreshes and tab closings, which makes them a juicy target.
+  * No easy way to log users out across tabs.
+
+**Imagine:**
+You proudly ship your SPA. One day a marketing script has a sneaky bug, and suddenly attackers are sipping your users' tokens like iced lattes. ☕💸
+
+---
+
+## ✅ Do: Keep Access Tokens in Memory
+
+```ts
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string) {
+  accessToken = token;
+}
+
+export function getAccessToken() {
+  return accessToken;
+}
+```
+
+* Short-lived (5-15 min).
+* Wiped out when you refresh or close tab.
+* If stolen, attacker has very little time to use it.
+
+---
+
+## ✅ Do: Put Refresh Tokens in HttpOnly Cookies
+
+Server sets it like:
+
+```ts
+res.cookie('refresh_token', refreshToken, {
+  httpOnly: true,
+  secure: true,
+  sameSite: 'lax',
+  path: '/auth/refresh',
+  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+});
+```
+
+* HttpOnly → JavaScript can't touch it 🛡️
+* Secure → only over HTTPS 🌐
+* SameSite → reduces CSRF 💪
+
+Note on SameSite:
+
+- Use `lax` for most SPAs served from the same site or subdomain.
+- Use `strict` if your app never needs cross-site navigation with cookies (most restrictive).
+- Use `none` + `secure: true` if your API is on a different site (not just a subdomain) and you need cross-site requests.
+
+Security tip: Rotate the refresh token on every refresh and detect reuse server-side. Invalidate the old token so a stolen one can't be replayed.
+
+---
+
+## 🔄 After Refreshing the Tab
+
+* Access token in memory? Gone. Poof. 🪄
+* Refresh token cookie? Still there, browser keeps it. 🍪
+
+So on app boot:
+
+```ts
+// bootstrap.ts
+try {
+  const res = await axios.post('/auth/refresh', null, { withCredentials: true });
+  setAccessToken(res.data.accessToken);
+} catch {
+  setAccessToken(null);
+  redirectToLogin();
+}
+```
+
+**Result:** User stays logged in like nothing happened.
+
+---
+
+## ⚔️ Pitfalls & How to Avoid Them
+
+| Pitfall                              | Why it's bad                                       | Fix                                             |
+| ------------------------------------ | -------------------------------------------------- | ----------------------------------------------- |
+| Long-lived Access Tokens             | If stolen, attacker gets days of free access       | Keep AT short (≤15 min)                         |
+| Refresh Token in JS storage          | Equivalent to leaving your house key under the mat | Always cookie (HttpOnly + Secure + SameSite)    |
+| Wildcard CORS (`*`) with credentials | Any site could make requests with your cookies     | Strictly whitelist origins                      |
+| Not rotating refresh tokens          | If one leaks, attacker reuses forever              | Rotate RT on every refresh                      |
+| Ignoring CSRF                        | If cookies auto-send on cross-site POST            | Add CSRF tokens for cookie-based auth endpoints |
+
+---
+
+## 📝 Example “Do and Don't” Cheatsheet
+
+**✅ Do this:**
+
+```ts
+// Create an axios instance with cookies enabled
+const api = axios.create({ withCredentials: true });
+
+let isRefreshing = false;
+let pendingRequests = [] as Array<(token?: string) => void>;
+
+api.interceptors.request.use((config) => {
+  const token = getAccessToken();
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+api.interceptors.response.use(undefined, async (error) => {
+  const status = error.response?.status;
+  const original = error.config || {};
+
+  // Don't try to refresh if the refresh endpoint itself failed
+  const isRefreshCall = typeof original.url === 'string' && original.url.includes('/auth/refresh');
+
+  if (status === 401 && !original._retry && !isRefreshCall) {
+    (original as any)._retry = true;
+
+    if (isRefreshing) {
+      return new Promise((resolve) => {
+        pendingRequests.push((newToken) => {
+          if (newToken) {
+            original.headers = { ...original.headers, Authorization: `Bearer ${newToken}` };
+          }
+          resolve(api(original));
+        });
+      });
+    }
+
+    isRefreshing = true;
+    try {
+      const { data } = await api.post('/auth/refresh', null); // cookie sent automatically
+      setAccessToken(data.accessToken);
+      pendingRequests.forEach((cb) => cb(data.accessToken));
+      pendingRequests = [];
+      original.headers = { ...original.headers, Authorization: `Bearer ${data.accessToken}` };
+      return api(original);
+    } catch (e) {
+      pendingRequests.forEach((cb) => cb());
+      pendingRequests = [];
+      setAccessToken(null);
+      redirectToLogin();
+      return Promise.reject(e);
+    } finally {
+      isRefreshing = false;
+    }
+  }
+
+  return Promise.reject(error);
+});
+```
+
+**❌ Don't do this:**
+
+```ts
+// Storing in localStorage
+const token = localStorage.getItem('accessToken');
+fetch('/api/user', { headers: { Authorization: `Bearer ${token}` } });
+```
+
+---
+
+## 🛡️ Extra Defenses
+
+* Content-Security-Policy → block inline JS.
+* Trusted Types (Chrome) → block XSS sinks.
+* Don't put tokens in URLs → they end up in logs & analytics.
+* BroadcastChannel → cross-tab logout sync.
