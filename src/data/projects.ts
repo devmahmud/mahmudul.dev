@@ -27,6 +27,18 @@ const projects: Project[] = [
     techs: ['Django', 'Python', 'Bootstrap'],
     link: 'https://github.com/devmahmud/DjangoBlog',
   },
+  {
+    title: 'Next Drag & Drop Form Builder',
+    techs: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Shadcn UI'],
+    link: 'https://github.com/devmahmud/next-dnd-formbuilder',
+    isComingSoon: false,
+  },
+  {
+    title: 'Express Prisma Typescript Boilerplate',
+    techs: ['Express', 'Prisma', 'Typescript'],
+    link: 'https://github.com/devmahmud/express-prisma-typescript-boilerplate',
+    isComingSoon: false,
+  },
 ]
   .sort((a, b) => a.title.localeCompare(b.title))
   .sort((a, b) => {
