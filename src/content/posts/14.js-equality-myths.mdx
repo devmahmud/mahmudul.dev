@@ -1,0 +1,134 @@
+---
+title: "JavaScript Equality, Explained Like a Human"
+publishedAt: 2025-09-19
+description: "When to use ===, when == helps, and the gotchas to remember."
+slug: "js-equality-myths"
+cover: "src/assets/posts/14/cover.jpg"
+coverAlt: "Illustration for a JavaScript equality explainer"
+ogImage: "/og-posts/14/cover.jpg"
+tags: ["javascript", "equality", "coercion", "basics", "web"]
+planned: true
+---
+
+# Why equality in JS feels confusing
+
+JavaScript has two equality operators that look similar but behave differently. Most confusion comes from not knowing when the language will convert types for you.
+
+
+## 🔑 The Two Operators
+
+* **`===` (Strict Equality)** → compares **value + type**, no type conversion.
+* **`==` (Loose Equality)** → compares **value after type coercion**, which makes it *weird but sometimes useful*.
+
+---
+
+## 🚩 Common Myths (and the truth)
+
+### **Myth 1: `==` is always bad, never use it.**
+
+❌ Wrong.<br/>
+✅ Truth: `==` can be useful if you **intentionally want coercion**, e.g.
+
+```js
+0 == false   // true
+"" == false  // true
+null == undefined // true
+```
+
+It's dangerous when you *don't expect coercion*, but not always “bad”.
+
+---
+
+### **Myth 2: `===` is always safer.**
+
+❌ Not always.<br/>
+✅ Truth: `===` avoids surprises, but sometimes you **want coercion**:
+
+```js
+if (input == null) {
+  // catches both null and undefined
+}
+```
+
+Here, `==` is shorter and clearer than writing:
+
+```js
+if (input === null || input === undefined) { ... }
+```
+
+---
+
+### **Myth 3: `null` and `undefined` are equal to everything with `==`.**
+
+❌ Nope.<br/>
+✅ Truth: they're only loosely equal to each other:
+
+```js
+null == undefined   // true
+null == 0           // false
+undefined == false  // false
+```
+
+---
+
+### **Myth 4: `NaN == NaN` is true.**
+
+❌ Nope.<br/>
+✅ Truth: `NaN` is **never equal** to anything, not even itself:
+
+```js
+NaN == NaN   // false
+NaN === NaN  // false
+```
+
+You must use:
+
+```js
+Number.isNaN(NaN)   // true
+```
+
+---
+
+### **Myth 5: Objects are compared by value.**
+
+❌ Nope.<br/>
+✅ Truth: Objects are compared by **reference**, always:
+
+```js
+{} == {}    // false
+[] == []    // false
+```
+
+Even if they look identical, different references → not equal.
+
+---
+
+### **Myth 6: `[] == 0` is false.**
+
+❌ Weirdly, it's true.<br/>
+✅ Truth: because coercion happens:
+
+```js
+[] == 0
+// [] → "" → 0
+// so 0 == 0 → true
+```
+
+---
+
+### **Myth 7: `"0" == false` is false.**
+
+❌ Actually true.<br/>
+✅ Truth: `"0"` → number `0`, and `false` → number `0`, so:
+
+```js
+"0" == false   // true
+```
+
+---
+
+## 🧠 Rule of Thumb
+
+* Use **`===`** by default for safety.
+* Use **`==`** *only when you know coercion rules* and want them (esp. for `null == undefined`).
+* Always beware of weird corner cases like `[] == ![]`.
