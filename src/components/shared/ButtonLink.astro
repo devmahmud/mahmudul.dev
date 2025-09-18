@@ -7,17 +7,12 @@ const { ...props } = Astro.props;
 ---
 
 <a
-  class="group relative inline-flex items-center justify-center space-x-2 sm:space-x-3 rounded-2xl backdrop-blur-2xl bg-white/5 border border-white/10 px-3 sm:px-6 py-2 sm:py-3 text-gray-300 transition-all duration-300 ease-out hover:bg-white/10 hover:border-white/20 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-inset overflow-hidden"
+  class="relative inline-flex items-center justify-center space-x-2 sm:space-x-3 rounded-2xl backdrop-blur-2xl backdrop-saturate-150 bg-white/0 border border-white/10 px-3 sm:px-6 py-2 sm:py-3 text-gray-300 transition duration-300 ease-out motion-reduce:transition-none transform-gpu whitespace-nowrap will-change-[transform,box-shadow] shadow-[0_8px_30px_-12px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)] hover:shadow-[0_16px_40px_-16px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.08)] hover:-translate-y-0.5 hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 overflow-hidden"
   rel="noreferrer"
   target="_blank"
   {...props}
 >
-  <!-- Animated gradient border -->
-  <div class="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-    <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-indigo-500/50 via-purple-500/50 to-violet-500/50 motion-safe:animate-pulse p-[1px]">
-      <div class="w-full h-full rounded-2xl bg-slate-950/90 backdrop-blur-2xl"></div>
-    </div>
-  </div>
+  <div class="pointer-events-none absolute inset-0 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"></div>
   
   <div class="relative">
     <slot />
