@@ -1,0 +1,30 @@
+---
+const { width = 24, height = 24, class: className, ...rest } = Astro.props;
+---
+
+<svg
+  width={width}
+  height={height}
+  viewBox="0 0 24 24"
+  fill="none"
+  class={className}
+  aria-hidden="true"
+  {...rest}
+>
+  <path
+    d="M7 17L17 7"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+  />
+  <path
+    d="M7 7H17V17"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+  />
+</svg>
+
+
