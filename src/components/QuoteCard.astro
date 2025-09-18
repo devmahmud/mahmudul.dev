@@ -4,7 +4,7 @@ import { getRandomQuote } from '@/data/quotes';
 const quote = getRandomQuote();
 ---
 
-<div class="relative pb-8 border-b border-white/10">
+<div class="relative pb-8">
   <div class="flex flex-col items-center gap-2 sm:gap-3">
     <q class="text-base sm:text-lg text-gray-300 italic leading-relaxed font-medium text-center md:text-left">
       {quote.text}
@@ -14,4 +14,16 @@ const quote = getRandomQuote();
       — {quote.author}
     </span>
   </div>
+
+  <svg class="absolute bottom-0 left-0 w-full h-3" viewBox="0 0 100 10" preserveAspectRatio="none" aria-hidden="true">
+    <path
+      d="M0 5 C 5 0, 15 10, 20 5 S 35 0, 40 5 55 10, 60 5 75 0, 80 5 95 10, 100 5"
+      fill="none"
+      stroke="currentColor"
+      class="text-white/10"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </svg>
 </div>
