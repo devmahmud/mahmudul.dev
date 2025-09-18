@@ -2,6 +2,13 @@
 import removeTrailingSlash from "@/utils/removeTrailingSlash";
 
 const pathname = removeTrailingSlash(Astro.url.pathname);
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/resume", label: "Resume" },
+  { href: "/posts", label: "Posts" },
+  { href: "/planned", label: "Plans" },
+  { href: "/til", label: "TIL" },
+];
 ---
 
 <!-- Mobile menu button -->
@@ -32,66 +39,23 @@ const pathname = removeTrailingSlash(Astro.url.pathname);
   <div class="backdrop-blur-3xl bg-slate-900/95 border-b border-slate-700/50 shadow-2xl">
     <div class="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
       <ul role="list" class="space-y-4">
-        <li>
-          <a
-            href="/"
-            class:list={{
-              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname === "/",
-              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname !== "/",
-            }}
-            aria-current={pathname === "/" ? "page" : undefined}
-          >
-            Home
-          </a>
-        </li>
-        <li>
-          <a
-            href="/resume"
-            class:list={{
-              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname === "/resume",
-              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname !== "/resume",
-            }}
-            aria-current={pathname === "/resume" ? "page" : undefined}
-          >
-            Resume
-          </a>
-        </li>
-        <li>
-          <a
-            href="/posts"
-            class:list={{
-              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname === "/posts",
-              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname !== "/posts",
-            }}
-            aria-current={pathname === "/posts" ? "page" : undefined}
-          >
-            Posts
-          </a>
-        </li>
-        <li>
-          <a
-            href="/planned"
-            class:list={{
-              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname === "/planned",
-              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname !== "/planned",
-            }}
-            aria-current={pathname === "/planned" ? "page" : undefined}
-          >
-            Plans
-          </a>
-        </li>
-        <li>
-          <a
-            href="/til"
-            class:list={{
-              ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname === "/til",
-              ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: pathname !== "/til",
-            }}
-            aria-current={pathname === "/til" ? "page" : undefined}
-          >
-            TIL
-          </a>
-        </li>
+        {navItems.map(({ href, label }) => {
+          const isActive = pathname === href;
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={{
+                  ["block text-white font-medium py-3 px-4 rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-400/30 shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: isActive,
+                  ["block text-slate-300 hover:text-white hover:bg-gradient-to-r hover:from-indigo-500/10 hover:to-purple-500/10 py-3 px-4 rounded-xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"]: !isActive,
+                }}
+                aria-current={isActive ? "page" : undefined}
+              >
+                {label}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </div>
   </div>

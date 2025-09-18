@@ -5,6 +5,13 @@ import MobileMenu from "@/components/MobileMenu.astro";
 
 const pathname = removeTrailingSlash(Astro.url.pathname);
 const notInHome = pathname !== "/";
+const navItems = [
+  { href: "/", label: "Home" },
+  { href: "/resume", label: "Resume" },
+  { href: "/posts", label: "Posts" },
+  { href: "/planned", label: "Plans" },
+  { href: "/til", label: "TIL" },
+];
 ---
 
 <header class="flex w-full items-center justify-between md:py-4">
@@ -34,111 +41,32 @@ const notInHome = pathname !== "/";
   <!-- Navigation -->
   <nav class="hidden md:block" role="navigation" aria-label="Primary">
     <ul role="list" class="flex items-center space-x-8">
-      <li>
-        <a
-          href="/"
-          class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/",
-          }}
-          aria-current={pathname === "/" ? "page" : undefined}
-        >
-          Home
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out"]: pathname === "/",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/",
-          }}></span>
+      {navItems.map(({ href, label }) => {
+        const isActive = pathname === href;
+        return (
+          <li>
+            <a
+              href={href}
+              class:list={{
+                ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: isActive,
+                ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: !isActive,
+              }}
+              aria-current={isActive ? "page" : undefined}
+            >
+              {label}
+              <span class:list={{
+                ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out"]: isActive,
+                ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"]: !isActive,
+              }}></span>
 
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out"]: pathname === "/",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/",
-          }}></span>
-        </a>
-      </li>
-      <li>
-        <a
-          href="/resume"
-          class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/resume",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/resume",
-          }}
-          aria-current={pathname === "/resume" ? "page" : undefined}
-        >
-          Resume
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out"]: pathname === "/resume",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/resume",
-          }}></span>
-
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out"]: pathname === "/resume",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/resume",
-          }}></span>
-        </a>
-      </li>
-      <li>
-        <a
-          href="/posts"
-          class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/posts",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/posts",
-          }}
-          aria-current={pathname === "/posts" ? "page" : undefined}
-        >
-          Posts
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out"]: pathname === "/posts",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/posts",
-          }}></span>
-
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out"]: pathname === "/posts",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/posts",
-          }}></span>
-        </a>
-      </li>
-      <li>
-        <a
-          href="/planned"
-          class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/planned",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/planned",
-          }}
-          aria-current={pathname === "/planned" ? "page" : undefined}
-        >
-          Plans
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out"]: pathname === "/planned",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/planned",
-          }}></span>
-
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out"]: pathname === "/planned",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/planned",
-          }}></span>
-        </a>
-      </li>
-      <li>
-        <a
-          href="/til"
-          class:list={{
-            ["text-white font-medium relative transition-all duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname === "/til",
-            ["text-gray-300 hover:text-white transition-all duration-300 ease-out relative group focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-950 rounded"]: pathname !== "/til",
-          }}
-          aria-current={pathname === "/til" ? "page" : undefined}
-        >
-          TIL
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out"]: pathname === "/til",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400 to-purple-400 transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/til",
-          }}></span>
-
-          <span class:list={{
-            ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out"]: pathname === "/til",
-            ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out group-hover:w-full"]: pathname !== "/til",
-          }}></span>
-        </a>
-      </li>
+              <span class:list={{
+                ["absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out"]: isActive,
+                ["absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-400/20 to-purple-400/20 blur-sm transition-all duration-300 ease-out group-hover:w-full"]: !isActive,
+              }}></span>
+            </a>
+          </li>
+        );
+      })}
     </ul>
   </nav>
 
