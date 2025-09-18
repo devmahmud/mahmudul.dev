@@ -14,7 +14,17 @@ const { ...props } = Astro.props;
 >
   <div class="pointer-events-none absolute inset-0 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"></div>
   
-  <div class="relative">
+  <span class="relative inline-flex items-center gap-2 sm:gap-3 leading-none">
     <slot />
-  </div>
+  </span>
 </a>
+
+<style>
+  :where(svg, img) {
+    display: block;
+    vertical-align: middle;
+  }
+  :where(span) {
+    line-height: 1;
+  }
+</style>
