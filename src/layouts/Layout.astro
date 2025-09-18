@@ -4,7 +4,7 @@ import  SpeedInsights  from "@vercel/speed-insights/astro"
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SEOTags from '@/components/seo/SEOTags.astro';
-import { ViewTransitions } from 'astro:transitions';
+import { ClientRouter } from 'astro:transitions';
 
 import '@fontsource/open-sans';
 import '@/styles/tailwind.css';
@@ -42,7 +42,7 @@ const { title, description, keywords, og, article, noindex, extraLinks = [], ext
   <SEOTags title={title} description={description} keywords={keywords} og={og} article={article} />
 
   <body class="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-slate-100 antialiased overflow-x-hidden">
-    <ViewTransitions />
+    <ClientRouter />
     <!-- Content wrapper with flexbox for sticky footer -->
     <div class="relative z-10 min-h-screen flex flex-col">
       <!-- Header -->
