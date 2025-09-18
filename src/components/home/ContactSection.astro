@@ -1,0 +1,42 @@
+---
+import SocialLinks from '@/components/SocialLinks.astro';
+import Link from '@/components/shared/Link.astro';
+
+export interface Props {
+  email: string;
+}
+
+const { email } = Astro.props as Props;
+---
+
+<section class="relative space-y-12" aria-labelledby="contact-heading">
+  <div class="absolute inset-0 bg-gradient-to-r from-blue-500/15 to-indigo-500/15 rounded-3xl blur-2xl" aria-hidden="true"></div>
+  
+  <div class="relative space-y-8">
+    <div class="space-y-2">
+      <h2 id="contact-heading" class="text-4xl font-bold text-white sm:text-5xl">Get in Touch</h2>
+      <div class="h-1 w-20 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full" aria-hidden="true"></div>
+    </div>
+    
+    <div class="max-w-3xl space-y-8">
+      <div class="relative overflow-hidden rounded-2xl backdrop-blur-2xl backdrop-saturate-150 bg-white/0 border border-white/10 p-8 transition-all duration-300 ease-out transform-gpu shadow-[0_8px_30px_-12px_rgba(0,0,0,0.55),inset_0_1px_0_rgba(255,255,255,0.06)]">
+        <div class="pointer-events-none absolute inset-0 rounded-2xl shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]"></div>
+        <p class="text-xl text-gray-300">
+          Email me at{' '}
+          <Link
+            href={`mailto:${email}`}
+            label={email}
+            class="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+          />{' '}
+          or follow me via my social links.
+        </p>
+      </div>
+      
+      <div class="flex justify-center">
+        <SocialLinks />
+      </div>
+    </div>
+  </div>
+</section>
+
+
